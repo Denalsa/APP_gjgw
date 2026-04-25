@@ -1,0 +1,33 @@
+.container {
+  padding: 20rpx;
+}
+
+.item {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 14rpx;
+}
+
+.item image {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.qty {
+  display: flex;
+  gap: 10rpx;
+}
+
+.settle {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="card" wx:if="{{cart.length}}">
+    <text class="title">下单确认</text>
+    <view class="line" wx:for="{{cart}}" wx:key="id">
+      <text>{{item.name}} × {{item.quantity}}</text>
+      <text>¥{{item.price * item.quantity}}</text>
+    </view>
+    <view class="total">总计：¥{{total}}</view>
+    <textarea placeholder="备注口味、忌口等" bindinput="onInputNote"></textarea>
+    <button class="primary-btn" bindtap="submitOrder">提交订单</button>
+  </view>
+
+  <view class="card" wx:if="{{latestOrder}}">
+    <text class="title">最新订单状态</text>
+    <text>订单号：{{latestOrder.id}}</text>
+    <text>状态：{{latestOrder.merchantStatus}}</text>
+    <text>商家端已收到本次点菜信息。</text>
+  </view>
+</view>

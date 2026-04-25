@@ -1,0 +1,37 @@
+.container {
+  padding: 32rpx;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.title {
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #242424;
+}
+
+.meta {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.cover {
+  margin: 16rpx auto;
+  width: 100%;
+  height: 380rpx;
+  border-radius: 32rpx;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.btn-row button {
+  flex: 1;
+}

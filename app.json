@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/menu/menu",
+    "pages/detail/detail",
+    "pages/cart/cart",
+    "pages/order/order"
+  ],
+  "window": {
+    "navigationBarTitleText": "今日点菜",
+    "navigationBarBackgroundColor": "#fff8f0",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7f7f7"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+  
+  }
+

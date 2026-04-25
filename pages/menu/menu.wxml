@@ -1,0 +1,41 @@
+<view class="page">
+  <scroll-view class="top-hot" scroll-x="true" show-scrollbar="false">
+    <view class="hot-wrap">
+      <view class="hot-item" wx:for="{{hotImages}}" wx:key="id">
+        <image src="{{item.image}}" mode="aspectFill"></image>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="main">
+    <scroll-view class="left-menu" scroll-y="true">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="switchCategory"
+        class="cat-item {{activeCategoryId === item.id ? 'active' : ''}}"
+      >
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <scroll-view class="dish-list" scroll-y="true">
+      <view class="card dish-item" wx:for="{{currentDishes}}" wx:key="id">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill" data-id="{{item.id}}" bindtap="openDetail"></image>
+        <view class="info">
+          <text class="name">{{item.name}}</text>
+          <text class="stock">库存：{{item.stock}}</text>
+          <text class="price">¥{{item.price}}</text>
+          <button class="primary-btn" size="mini" data-dish="{{item}}" bindtap="addDish">点菜</button>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="cart-bar" bindtap="openCart">
+    <text>🛒 购物车（{{cartCount}} 件）</text>
+    <text>合计：¥{{cartTotal}}</text>
+  </view>
+</view>

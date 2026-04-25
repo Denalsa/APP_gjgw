@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="card item" wx:for="{{cart}}" wx:key="id">
+    <image src="{{item.image}}" mode="aspectFill"></image>
+    <view class="info">
+      <text>{{item.name}}</text>
+      <text>¥{{item.price}} × {{item.quantity}}</text>
+      <view class="qty">
+        <button size="mini" data-id="{{item.id}}" data-delta="-1" bindtap="changeQty">-</button>
+        <button size="mini" data-id="{{item.id}}" data-delta="1" bindtap="changeQty">+</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="settle card">
+    <text>总价：¥{{total}}</text>
+    <button class="primary-btn" bindtap="goOrder">确认并下单</button>
+  </view>
+</view>

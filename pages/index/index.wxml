@@ -1,0 +1,12 @@
+<view class="container">
+  <view class="card hero">
+    <text class="title">今日点菜助手</text>
+    <text class="meta">日期：{{today}}</text>
+    <text class="meta">今日节气：{{solarTerm}}</text>
+    <image class="cover" mode="aspectFill" src="{{coverImages[coverIndex]}}"></image>
+    <view class="btn-row">
+      <button class="secondary-btn" size="mini" bindtap="switchCover">更换图片</button>
+      <button class="primary-btn" size="mini" bindtap="goMenu">进入菜单</button>
+    </view>
+  </view>
+</view>

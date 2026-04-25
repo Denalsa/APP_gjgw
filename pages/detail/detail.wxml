@@ -1,0 +1,14 @@
+<view class="container" wx:if="{{dish}}">
+  <image class="banner" src="{{dish.image}}" mode="aspectFill"></image>
+  <view class="card">
+    <text class="name">{{dish.name}}</text>
+    <text class="price">¥{{dish.price}}</text>
+    <text class="desc">{{dish.description}}</text>
+    <view class="tag">分类：{{dish.categoryName}}</view>
+    <view class="ingredients">
+      <text class="subtitle">原材料</text>
+      <text wx:for="{{dish.ingredients}}" wx:key="*this">• {{item}}</text>
+    </view>
+    <button class="primary-btn" bindtap="addDish">加入购物车</button>
+  </view>
+</view>
