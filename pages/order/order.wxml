@@ -1,19 +1,45 @@
-<view class="container">
-  <view class="card" wx:if="{{cart.length}}">
-    <text class="title">下单确认</text>
-    <view class="line" wx:for="{{cart}}" wx:key="id">
-      <text>{{item.name}} × {{item.quantity}}</text>
-      <text>¥{{item.price * item.quantity}}</text>
+<!-- 未提交时：确认下单界面 -->
+<view wx:if="{{!orderSubmitted}}">
+  <view class="cart-list">
+    <view class="cart-item" wx:for="{{cart}}" wx:key="id">
+      <image class="item-img" src="{{item.image}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
+      <view class="item-info">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-price">¥{{item.price}} × {{item.quantity}}</text>
+      </view>
     </view>
-    <view class="total">总计：¥{{total}}</view>
-    <textarea placeholder="备注口味、忌口等" bindinput="onInputNote"></textarea>
-    <button class="primary-btn" bindtap="submitOrder">提交订单</button>
   </view>
+  
+  <view class="order-note">
+    <input placeholder="备注（如：少辣）" value="{{note}}" bindinput="onInputNote" />
+  </view>
+  
+  <view class="order-total">
+    <text>总价：¥{{total}}</text>
+  </view>
+  
+  <button class="submit-btn" bindtap="submitOrder">确认并下单</button>
+</view>
 
-  <view class="card" wx:if="{{latestOrder}}">
-    <text class="title">最新订单状态</text>
-    <text>订单号：{{latestOrder.id}}</text>
-    <text>状态：{{latestOrder.merchantStatus}}</text>
-    <text>商家端已收到本次点菜信息。</text>
+<!-- 提交成功后：订单快照界面 -->
+<view wx:else class="order-success">
+  <text class="success-title">🎉 下单成功!</text>
+  <view class="order-detail">
+    <text class="detail-title">订单详情：</text>
+    <view class="cart-item" wx:for="{{cart}}" wx:key="id">
+      <image class="item-img" src="{{item.image}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
+      <view class="item-info">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-price">¥{{item.price}} × {{item.quantity}}</text>
+      </view>
+    </view>
+    <view class="order-note" wx:if="{{note}}">
+      <text>备注：{{note}}</text>
+    </view>
+    <view class="order-total">
+      <text>总价：¥{{total}}</text>
+    </view>
+    <text class="order-id" wx:if="{{orderId}}">订单编号：{{orderId}}</text>
   </view>
+  <button class="back-btn" bindtap="goHome">返回首页</button>
 </view>

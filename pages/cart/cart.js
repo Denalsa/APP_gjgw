@@ -30,6 +30,10 @@ Page({
       wx.showToast({ title: '购物车为空', icon: 'none' });
       return;
     }
+    // ✅ 跳转前将购物车数据临时锁定在 globalData 里
+    const app = getApp();
+    wx.setStorageSync('order_cart', this.data.cart);
+    console.log('跳转前存储缓存:', wx.getStorageSync('order_cart'));
     wx.navigateTo({ url: '/pages/order/order' });
   }
 });

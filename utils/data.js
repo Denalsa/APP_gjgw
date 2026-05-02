@@ -108,7 +108,7 @@ const dishCategories = [
         name: '黑椒牛排',
         price: 88,
         stock: 9,
-        image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=80',
+        image: 'cloud://cloud1-d9gw4slrf8bc6bd35.636c-cloud1-d9gw4slrf8bc6bd35-1424492094/dsh_img/黑椒牛柳意面.jpg',
         description: '肉香浓郁，黑椒微辣。',
         ingredients: ['牛排', '黑胡椒汁', '土豆泥', '芦笋']
       }

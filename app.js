@@ -6,7 +6,7 @@ App({
       //新增 onLaunch 生命周期，调用 wx.cloud.init 初始化云开发环境，使小程序能够使用云存储和云数据库能力。
     } else {
       wx.cloud.init({
-        env: 'prod-d6girqehu56c8172c', // 替换为你的云环境ID
+        env: 'cloud1-d9gw4slrf8bc6bd35', // 替换为你的云环境ID prod-d6girqehu56c8172c         cloud1-d9gw4slrf8bc6bd35
         traceUser: true
       });
     }
@@ -33,24 +33,5 @@ App({
 
   clearCart() {
     this.globalData.cart = [];
-  },
-
-  createOrder(note = '') {
-    const timestamp = Date.now();
-    const cartSnapshot = this.globalData.cart.map((item) => ({ ...item }));
-    const totalPrice = cartSnapshot.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    const order = {
-      id: `ORD-${timestamp}`,
-      items: cartSnapshot,
-      totalPrice,
-      note,
-      createdAt: timestamp,
-      merchantStatus: '已发送到商家'
-    };
-
-    this.globalData.orders.unshift(order);
-    this.clearCart();
-    return order;
   }
 });

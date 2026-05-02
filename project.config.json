@@ -24,5 +24,8 @@
   "libVersion": "latest",
   "appid": "wxa520f00a20c7dc39",
   "projectname": "App_gjgw",
-  "condition": {}
+  "condition": {},
+  "cloudfunctionRoot": "cloudfunctions/",
+  "cloud": true,
+  "simulatorPluginLibVersion": {}
 }
