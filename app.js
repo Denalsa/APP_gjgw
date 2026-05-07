@@ -10,10 +10,36 @@ App({
         traceUser: true
       });
     }
+    // 读取本地缓存中的角色信息 
+    const userRole = wx.getStorageSync('userRole') || '';
+    const merchantInfo = wx.getStorageSync('merchantInfo') || null;
+    this.globalData.userRole = userRole;
+    this.globalData.merchantInfo = merchantInfo;
+  
   },
   globalData: {
     cart: [],
-    orders: []
+    orders: [],
+    userRole: '',          // 'customer' | 'merchant'
+    openid: '',
+    merchantInfo: null     // 商家信息
+  },
+  // 设置用户角色
+  setUserRole(role, info) {
+    this.globalData.userRole = role;
+    this.globalData.merchantInfo = info;
+    wx.setStorageSync('userRole', role);
+    if (info) {
+      wx.setStorageSync('merchantInfo', info);
+    }
+  },
+
+  // 退出商家登录
+  clearMerchantLogin() {
+    this.globalData.userRole = '';
+    this.globalData.merchantInfo = null;
+    wx.removeStorageSync('userRole');
+    wx.removeStorageSync('merchantInfo');
   },
 
   addToCart(dish) {

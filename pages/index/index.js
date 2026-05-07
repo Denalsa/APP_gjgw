@@ -1,3 +1,6 @@
+// pages/index/index.js
+const app = getApp();
+
 Page({
   data: {
     today: '',
@@ -11,6 +14,19 @@ Page({
   },
 
   onLoad() {
+    // 若没有选择角色，跳转登录页
+    const userRole = app.globalData.userRole || wx.getStorageSync('userRole');
+    if (!userRole) {
+      wx.reLaunch({ url: '/pages/login/login' });
+      return;
+    }
+
+    // 商家无法进入客户首页，直接重定向到商家后台
+    if (userRole === 'merchant') {
+      wx.reLaunch({ url: '/pages/merchant/merchant' });
+      return;
+    }
+
     const now = new Date();
     const dateText = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日`;
     this.setData({
@@ -21,9 +37,9 @@ Page({
 
   getSolarTerm(date) {
     const terms = [
-      '小寒', '大寒', '立春', '雨水', '惊蛰', '春分', '清明', '谷雨',
-      '立夏', '小满', '芒种', '夏至', '小暑', '大暑', '立秋', '处暑',
-      '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', '冬至'
+      '小寒', '大寒', '立春', '雨水', '惊蛰', '春分', '清明', '谷雨', '立夏', '小满',
+      '芒种', '夏至', '小暑', '大暑', '立秋', '处暑', '白露', '秋分', '寒露', '霜降',
+      '立冬', '小雪', '大雪', '冬至'
     ];
     const start = new Date(date.getFullYear(), 0, 5).getTime();
     const diff = date.getTime() - start;

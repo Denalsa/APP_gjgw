@@ -57,22 +57,35 @@ submitOrder() {
   
     wx.cloud.callFunction({
       name: 'createorder',   // 请再次确认云端云函数名称的大小写
-      data: {
-        cart: cart,
-        note: this.data.note || ''
-      }
+      data: {cart: cart,note: this.data.note || ''}
     }).then(res => {
       wx.hideLoading();
-      wx.showToast({ title: '下单成功' });
-      
+      const result = res.result;
+      if (result.success) {
+        wx.showToast({ title: '下单成功' });
+        app.clearCart();
+        wx.removeStorageSync('order_cart');
+        // ===== 新增：通知商家 =====
+        if (result.orderInfo) {
+          wx.cloud.callFunction({
+            name: 'notifymerchant',
+            data: { orderInfo: result.orderInfo }
+          }).catch(err => console.warn('通知商家失败', err));}
       // 清空全局购物车和缓存
       app.clearCart();
       wx.removeStorageSync('order_cart'); // 在这里清除缓存
+
       // 更新页面为“下单成功”状态
       this.setData({
         orderSubmitted: true,
-        orderId: res.result.orderId || ''  // 假设云函数返回了 orderId
+        orderId: res.result.orderId || ''  // 假设云函数返回了 orderId*/
       });
+    } else {
+      wx.showToast({ title: '提交失败', icon: 'error' });
+    }
+
+
+
     }).catch(err => {
       wx.hideLoading();
       console.error('下单失败', err);

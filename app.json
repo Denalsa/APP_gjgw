@@ -1,10 +1,13 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/index/index",
     "pages/menu/menu",
     "pages/detail/detail",
     "pages/cart/cart",
-    "pages/order/order"
+    "pages/order/order",
+    "pages/merchant/merchant",
+    "pages/addDish/addDish"
   ],
   "window": {
     "navigationBarTitleText": "今日点菜",
@@ -15,6 +18,4 @@
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"
-  
-  }
-
+}

@@ -1,0 +1,35 @@
+<!-- pages/login/login.wxml -->
+<view class="login-container">
+  <view class="login-header">
+    <text class="app-title">🍽️ 今日点菜</text>
+    <text class="app-subtitle">请选择您的身份</text>
+  </view>
+
+  <!-- 普通商家登录区（隐藏） -->
+  <view class="role-group" wx:if="{{showMerchantLogin}}">
+    <view class="role-title">商家登录</view>
+    <view class="form-group">
+      <input class="password-input" type="password" placeholder="请输入商家密码"
+             value="{{password}}" bindinput="onPasswordInput" focus />
+    </view>
+    <view class="error-msg" wx:if="{{passwordError}}">{{passwordError}}</view>
+    <view class="btn-group">
+      <button class="btn btn-cancel" bindtap="hideMerchant">返回</button>
+      <button class="btn btn-confirm" bindtap="merchantLogin">确 认</button>
+    </view>
+  </view>
+
+  <view class="role-group" wx:if="{{!showMerchantLogin}}">
+    <view class="role-option customer-box" bindtap="goCustomer">
+      <view class="role-icon">🙋</view>
+      <view class="role-name">我是顾客</view>
+      <view class="role-desc">浏览菜单 · 点餐下单</view>
+    </view>
+
+    <view class="role-option merchant-box" bindtap="showMerchant">
+      <view class="role-icon">👨‍🍳</view>
+      <view class="role-name">我是商家</view>
+      <view class="role-desc">管理菜品 · 新增菜式</view>
+    </view>
+  </view>
+</view>

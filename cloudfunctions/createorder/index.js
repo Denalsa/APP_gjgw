@@ -15,7 +15,16 @@ exports.main = async (event, context) => {
         openid: cloud.getWXContext().OPENID
       }
     });
-    return { success: true, orderId: res._id };
+    return { 
+      success: true, 
+      orderId: res._id,
+      orderInfo: {
+        dishes: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
+        total,
+        createTime: Date.now(),
+        note: note || ''
+      }
+    };
   } catch (e) {
     return { success: false, error: e.message };
   }
