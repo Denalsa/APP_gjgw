@@ -27,55 +27,6 @@ Page({
     // 每次显示都刷新菜品列表
     this.loadDishes();
   },
-
-// 检查当前商家是否已订阅
-checkSubscription() {
-  const db = wx.cloud.database();
-  db.collection('merchants')
-    .where({ openid: app.globalData.openid })  // 需要事先在登录时写入 openid
-    .get()
-    .then(res => {
-      if (res.data.length > 0) {
-        this.setData({ subscribed: res.data[0].subscribed || false });
-      }
-    });
-},
-
-// 请求订阅消息
-requestSubscribe() {
-  wx.requestSubscribeMessage({
-    tmplIds: ['你的模板ID'], // 替换为实际模板ID
-    success: (res) => {
-      if (res['你的模板ID'] === 'accept') {
-        // 更新数据库中的订阅状态
-        const db = wx.cloud.database();
-        db.collection('merchants').where({ openid: app.globalData.openid }).update({
-          data: { subscribed: true }
-        }).then(() => {
-          this.setData({ subscribed: true });
-          wx.showToast({ title: '已开启接单提醒', icon: 'success' });
-        });
-      }
-    },
-    fail: (err) => {
-      console.error('订阅失败', err);
-      wx.showToast({ title: '订阅失败', icon: 'none' });
-    }
-  });
-},
-//以上代码为提醒商家消息版本增加
-
-
-
-
-
-
-
-
-
-
-
-  // 从云数据库加载菜品
   loadDishes() {
     const db = wx.cloud.database();
     this.setData({ loading: true });
@@ -96,6 +47,42 @@ requestSubscribe() {
         this.setData({ loading: false, refreshing: false });
       });
   },
+  // 检查当前商家是否已订阅
+  checkSubscription() {
+    const db = wx.cloud.database();
+    db.collection('merchants')
+      .where({ openid: app.globalData.openid })  // 需要事先在登录时写入 openid
+      .get()
+      .then(res => {
+        if (res.data.length > 0) {
+          this.setData({ subscribed: res.data[0].subscribed || false });
+        }
+      });
+  },
+
+// 请求订阅消息
+  requestSubscribe() {
+    wx.requestSubscribeMessage({
+      tmplIds: ['wxa520f00a20c7dc39'], // 替换为实际模板ID
+      success: (res) => {
+        if (res['wxa520f00a20c7dc39'] === 'accept') {
+          // 更新数据库中的订阅状态
+          const db = wx.cloud.database();
+          db.collection('merchants').where({ openid: app.globalData.openid }).update({
+            data: { subscribed: true }
+          }).then(() => {
+            this.setData({ subscribed: true });
+            wx.showToast({ title: '已开启接单提醒', icon: 'success' });
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('订阅失败', err);
+        wx.showToast({ title: '订阅失败', icon: 'none' });
+      }
+    });
+  },
+  //以上代码为提醒商家消息版本增加，以下从云数据库加载菜品
 
   // 下拉刷新
   onPullDownRefresh() {

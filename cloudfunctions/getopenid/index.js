@@ -21,6 +21,10 @@ exports.main = async (event, context) => {
     if (merchantRes.data.length > 0) {
       // 密码匹配，获取商家信息
       const merchant = merchantRes.data[0];
+      await db.collection('merchants').doc(merchant._id).update({
+        data: { openid }
+      });
+
       return {
         success: true,
         openid,
@@ -32,12 +36,9 @@ exports.main = async (event, context) => {
     }
 
     // 密码不匹配
-    return {
-      success: false,
-      message: '密码错误',
-      openid
-    };
-  } catch (err) {
+    return {success: false,message: '密码错误',openid};
+  } 
+  catch (err) {
     console.error('查询商家失败', err);
     return {
       success: false,

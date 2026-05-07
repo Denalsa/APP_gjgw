@@ -38,7 +38,7 @@ Page({
     }
 
     wx.showLoading({ title: '验证中...' });
-
+    wx.setStorageSync('merchantPwd', this.data.password.trim());
     wx.cloud.callFunction({
       name: 'getopenid',
       data: { password }

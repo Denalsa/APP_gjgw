@@ -31,22 +31,20 @@ exports.main = async (event, context) => {
     thing4: { value: orderInfo.note || '无备注' }       // 备注
   };
 
-  // 并发发送给所有订阅商家
-  const sendPromises = merchantsRes.data.map(merchant => {
-    return cloud.openapi.subscribeMessage.send({
-      touser: merchant.openid,
-      templateId: TEMPLATE_ID,
-      data: msgData,
-      miniprogramState: 'developer' // 开发中暂用developer，发布后改formal
-    });
-  });
-
-  try {
-    await Promise.all(sendPromises);
-    return { success: true };
-  } catch (err) {
-    console.error('发送订阅消息失败', err);
-    return { success: false, error: err.message };
+  const sendResults = [];
+  for (const merchant of merchantsRes.data) {
+    if (!merchant.openid) continue;
+    try {
+      const res = await cloud.openapi.subscribeMessage.send({
+        touser: merchant.openid,
+        templateId: TEMPLATE_ID,
+        data: msgData,
+        miniprogramState: 'developer'
+      });
+      sendResults.push(res);
+    } catch (e) {
+      sendResults.push({ error: e.message });
+    }
   }
 };
 

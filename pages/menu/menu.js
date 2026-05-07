@@ -1,65 +1,76 @@
-const { dishCategories, getHotDishImages } = require('../../utils/data');
-const app = getApp();
-
+// pages/menu/menu.js
 Page({
   data: {
-    categories: [],
-    activeCategoryId: '',
-    currentDishes: [],
-    hotImages: [],
-    cartCount: 0,
-    cartTotal: 0
+    categories: ['炒菜', '炖菜', '蒸菜', '煲汤', '面包', '蛋糕', '西餐正餐'],
+    activeCategory: '炒菜',
+    dishes: [],
+    loading: true
   },
 
   onLoad() {
-    const categories = dishCategories.map((cat) => ({ id: cat.id, name: cat.name }));
-    const activeCategoryId = categories[0]?.id || '';
-    this.setData({
-      categories,
-      activeCategoryId,
-      hotImages: getHotDishImages()
-    });
-    this.updateDishList(activeCategoryId);
+    this.loadDishes();
   },
 
   onShow() {
-    this.refreshCartInfo();
+    this.loadDishes();
   },
 
-  updateDishList(categoryId) {
-    const found = dishCategories.find((cat) => cat.id === categoryId);
-    this.setData({
-      currentDishes: found ? found.dishes : []
-    });
+  // ★ 从云数据库加载菜品
+  loadDishes() {
+    const db = wx.cloud.database();
+    this.setData({ loading: true });
+    db.collection('dishes')
+      .orderBy('createTime', 'desc')
+      .get()
+      .then(res => {
+        const allDishes = res.data;
+        // 转换 cloud:// 图片为临时链接
+        const cloudFiles = allDishes
+          .filter(d => d.image && d.image.startsWith('cloud://'))
+          .map(d => d.image);
+        if (cloudFiles.length > 0) {
+          wx.cloud.getTempFileURL({
+            fileList: cloudFiles,
+            success: (imgRes) => {
+              const map = {};
+              imgRes.fileList.forEach(f => map[f.fileID] = f.tempFileURL);
+              allDishes.forEach(d => { if (d.image && map[d.image]) d.image = map[d.image]; });
+              this.setData({ dishes: allDishes, loading: false });
+            },
+            fail: () => this.setData({ dishes: allDishes, loading: false })
+          });
+        } else {
+          this.setData({ dishes: allDishes, loading: false });
+        }
+      })
+      .catch(() => {
+        wx.showToast({ title: '加载菜品失败', icon: 'none' });
+        this.setData({ loading: false });
+      });
   },
 
+  // 切换分类
   switchCategory(e) {
-    const categoryId = e.currentTarget.dataset.id;
-    this.setData({ activeCategoryId: categoryId });
-    this.updateDishList(categoryId);
+    this.setData({ activeCategory: e.currentTarget.dataset.category });
   },
 
-  addDish(e) {
+  // 查看详情
+  goDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({ url: `/pages/detail/detail?id=${id}` });
+  },
+
+  // 加入购物车
+  addToCart(e) {
     const dish = e.currentTarget.dataset.dish;
+    const app = getApp();
     app.addToCart(dish);
     this.refreshCartInfo();
     wx.showToast({ title: '已加入购物车', icon: 'success' });
   },
 
-  openDetail(e) {
-    wx.navigateTo({
-      url: `/pages/detail/detail?id=${e.currentTarget.dataset.id}`
-    });
-  },
-
-  openCart() {
-    wx.navigateTo({ url: '/pages/cart/cart' });
-  },
-
-  refreshCartInfo() {
-    const cart = app.globalData.cart;
-    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    this.setData({ cartCount, cartTotal });
+  // 去购物车
+  goCart() {
+    wx.switchTab({ url: '/pages/cart/cart' });
   }
 });
