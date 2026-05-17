@@ -52,9 +52,14 @@ App({
   },
 
   updateCartQuantity(id, quantity) {
-    this.globalData.cart = this.globalData.cart
-      .map((item) => (item.id === id ? { ...item, quantity } : item))
-      .filter((item) => item.quantity > 0);
+    const index = this.globalData.cart.findIndex(item => item.id === id);
+    if (index > -1) {
+        if (quantity <= 0) {
+            this.globalData.cart.splice(index, 1);
+        } else {
+            this.globalData.cart[index].quantity = quantity;
+        }
+    }
   },
 
   clearCart() {

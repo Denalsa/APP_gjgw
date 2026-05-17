@@ -8,7 +8,7 @@
         <image wx:if="{{tempImage || imagePath}}" class="preview-img" src="{{tempImage || imagePath}}" mode="aspectFill" />
         <view class="upload-placeholder" wx:else>
           <text class="upload-icon">📷</text>
-          <text class="upload-text">点击上传图片</text>
+          <text class="upload-text">点击上传</text>
         </view>
       </view>
     </view>
@@ -16,12 +16,12 @@
     <!-- 菜品名称 -->
     <view class="form-item">
       <text class="form-label">菜品名称 <text class="required">*</text></text>
-      <input class="form-input" placeholder="请输入菜品名称" value="{{name}}" bindinput="onInputName" />
+      <input class="form-input" placeholder="输入名称" value="{{name}}" bindinput="onInputName" />
     </view>
 
     <!-- 分类 -->
     <view class="form-item">
-      <text class="form-label">菜品分类 <text class="required">*</text></text>
+      <text class="form-label">分类 <text class="required">*</text></text>
       <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
         <view class="picker-view">
           <text>{{categories[categoryIndex]}}</text>
@@ -33,32 +33,32 @@
     <!-- 价格 -->
     <view class="form-item">
       <text class="form-label">价格 (元) <text class="required">*</text></text>
-      <input class="form-input" type="digit" placeholder="请输入菜品价格" value="{{price}}" bindinput="onInputPrice" />
+      <input class="form-input" type="digit" placeholder="输入价格" value="{{price}}" bindinput="onInputPrice" />
     </view>
 
     <!-- 库存 -->
     <view class="form-item">
-      <text class="form-label">库存数量 <text class="required">*</text></text>
-      <input class="form-input" type="number" placeholder="请输入库存数量" value="{{stock}}" bindinput="onInputStock" />
+      <text class="form-label">库存 <text class="required">*</text></text>
+      <input class="form-input" type="number" placeholder="输入库存" value="{{stock}}" bindinput="onInputStock" />
     </view>
 
     <!-- 描述 -->
     <view class="form-item">
-      <text class="form-label">菜品描述</text>
-      <textarea class="form-textarea" placeholder="请输入菜品描述（选填）" value="{{description}}" bindinput="onInputDesc" maxlength="200" auto-height />
+      <text class="form-label">描述</text>
+      <textarea class="form-textarea" placeholder="选填" value="{{description}}" bindinput="onInputDesc" maxlength="200" auto-height />
     </view>
 
     <!-- 原材料 -->
     <view class="form-item">
       <text class="form-label">原材料</text>
-      <input class="form-input" placeholder="如：牛肉, 土豆, 胡萝卜 (逗号分隔)" value="{{ingredients}}" bindinput="onInputIngredients" />
+      <input class="form-input" placeholder="如：牛肉, 土豆" value="{{ingredients}}" bindinput="onInputIngredients" />
     </view>
   </view>
 
   <!-- 提交按钮 -->
   <view class="submit-bar">
     <button class="submit-btn" bindtap="submitDish" loading="{{submitting}}" disabled="{{submitting}}">
-      {{submitting ? '提交中...' : '确认添加菜品'}}
+      {{submitting ? '提交中...' : '确认添加'}}
     </button>
   </view>
 </view>
