@@ -1,5 +1,7 @@
 // pages/merchant/merchant.js
 const app = getApp();
+const TEMPLATE_ID = 'Ui42b4ts_Z8uXJfIc5urZFwCP1SNV3J6KpphONj4kTY'; // 粘贴你从公众平台拿到的模板ID
+
 
 Page({
   data: {
@@ -61,27 +63,43 @@ Page({
   },
 
 // 请求订阅消息
-  requestSubscribe() {
-    wx.requestSubscribeMessage({
-      tmplIds: ['wxa520f00a20c7dc39'], // 替换为实际模板ID
-      success: (res) => {
-        if (res['wxa520f00a20c7dc39'] === 'accept') {
-          // 更新数据库中的订阅状态
-          const db = wx.cloud.database();
-          db.collection('merchants').where({ openid: app.globalData.openid }).update({
+requestSubscribe() {
+  const that = this; // 保存 this 指向，后续回调中使用
+  wx.requestSubscribeMessage({
+    tmplIds: [TEMPLATE_ID],
+    success: (res) => {
+      // 检查用户对特定模板的订阅结果
+      if (res[TEMPLATE_ID] === 'accept') {
+        // ★ 关键：用户同意后，在云数据库中标记“已订阅”
+        const db = wx.cloud.database();
+        db.collection('merchants')
+          .where({
+            // 通过密码定位当前商家，确保更新的是自己的记录
+            password: wx.getStorageSync('merchantPwd') || ''
+          })
+          .update({
             data: { subscribed: true }
-          }).then(() => {
-            this.setData({ subscribed: true });
+          })
+          .then(() => {
+            // 更新页面状态，显示“已开启”
+            that.setData({ subscribed: true });
             wx.showToast({ title: '已开启接单提醒', icon: 'success' });
+          })
+          .catch(err => {
+            console.error('更新订阅状态失败', err);
+            wx.showToast({ title: '开启失败，请重试', icon: 'none' });
           });
-        }
-      },
-      fail: (err) => {
-        console.error('订阅失败', err);
-        wx.showToast({ title: '订阅失败', icon: 'none' });
+      } else {
+        // 用户拒绝了订阅
+        wx.showToast({ title: '你拒绝了通知，将无法收到新订单提醒', icon: 'none' });
       }
-    });
-  },
+    },
+    fail: (err) => {
+      console.error('订阅消息调用失败', err);
+      wx.showToast({ title: '调用订阅失败，请稍后重试', icon: 'none' });
+    }
+  });
+} ,
   //以上代码为提醒商家消息版本增加，以下从云数据库加载菜品
 
   // 下拉刷新
