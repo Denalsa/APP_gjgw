@@ -46,6 +46,8 @@ Page({
       wx.hideLoading();
       const result = res.result;
       if (result.success) {
+        app.globalData.openid = result.openid;
+        wx.setStorageSync('openid', result.openid);  // 顺便缓存
         app.setUserRole('merchant', result.merchantInfo);
         wx.reLaunch({ url: '/pages/merchant/merchant' });
       } else {

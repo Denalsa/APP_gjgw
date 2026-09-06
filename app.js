@@ -13,6 +13,7 @@ App({
     // 读取本地缓存中的角色信息 
     const userRole = wx.getStorageSync('userRole') || '';
     const merchantInfo = wx.getStorageSync('merchantInfo') || null;
+    const openid = wx.getStorageSync('openid') || '';  // ← 恢复 openid
     this.globalData.userRole = userRole;
     this.globalData.merchantInfo = merchantInfo;
   

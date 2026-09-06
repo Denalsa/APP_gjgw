@@ -65,9 +65,11 @@ Page({
 // 请求订阅消息
 requestSubscribe() {
   const that = this; // 保存 this 指向，后续回调中使用
+  console.log('当前 openid:', app.globalData.openid);  // ← 加这行
   wx.requestSubscribeMessage({
     tmplIds: [TEMPLATE_ID],
     success: (res) => {
+      console.log('订阅结果:', res);  // ← 加这行
       // 检查用户对特定模板的订阅结果
       if (res[TEMPLATE_ID] === 'accept') {
         // ★ 关键：用户同意后，在云数据库中标记“已订阅”
@@ -78,8 +80,8 @@ requestSubscribe() {
             openid: app.globalData.openid          })
           .update({
             data: { subscribed: true }             })
-          .then(() => {
-            // 更新页面状态，显示“已开启”
+          .then(updateRes => {
+            console.log('数据库更新结果:', updateRes);  // ← 加这行
             that.setData({ subscribed: true });
             wx.showToast({ title: '已开启接单提醒', icon: 'success' });
           })
