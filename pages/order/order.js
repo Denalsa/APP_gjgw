@@ -72,11 +72,24 @@ refreshCart() {
         note: this.data.note || ''
       };
       wx.cloud.callFunction({
-        name: 'notifymerchant',  
-        // ★ 仓库里叫 notifymerchant
+        name: 'notifymerchant',
         data: { orderInfo }
-      }).then(() => console.log('通知商家成功'))
-        .catch(err => console.warn('通知商家失败', err));
+      }).then(res => {
+        const result = res.result;
+        if (result.success && result.sendResults) {
+          const failures = result.sendResults.filter(r => r.errCode !== 0);
+          if (failures.length === 0) {
+            console.log('通知商家成功');
+          } else {
+            console.warn('部分商家通知失败:', failures);
+            // 如果有失败的，提示用户或记录日志
+            const hasRefused = failures.some(f => f.errCode === 43101);
+            if (hasRefused) {
+              wx.showToast({ title: '商家未订阅，通知未送达', icon: 'none' });
+            }
+          }
+        }
+      }).catch(err => console.warn('调用云函数失败', err));
 
       this.setData({ orderSubmitted: true, orderId: res.result.orderId || '' });
     }).catch(err => {

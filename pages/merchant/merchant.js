@@ -75,11 +75,9 @@ requestSubscribe() {
         db.collection('merchants')
           .where({
             // 通过密码定位当前商家，确保更新的是自己的记录
-            password: wx.getStorageSync('merchantPwd') || ''
-          })
+            openid: app.globalData.openid          })
           .update({
-            data: { subscribed: true }
-          })
+            data: { subscribed: true }             })
           .then(() => {
             // 更新页面状态，显示“已开启”
             that.setData({ subscribed: true });

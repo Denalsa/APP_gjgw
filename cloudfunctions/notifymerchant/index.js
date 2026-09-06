@@ -43,13 +43,24 @@ exports.main = async (event, context) => {
         const res = await cloud.openapi.subscribeMessage.send({
           touser: merchant.openid,
           templateId: TEMPLATE_ID,
+          page: 'pages/merchant/merchant',  // ← 点击消息跳转商家页
           data: msgData,
-          miniprogramState: 'developer'
+          miniprogramState: 'formal'  // 或根据环境动态判断
         });
         sendResults.push({ openid: merchant.openid, errCode: 0 });
       } catch (sendErr) {
-        console.error('发送给商家失败:', merchant.openid, sendErr);
-        sendResults.push({ openid: merchant.openid, errCode: sendErr.errCode || -1, errMsg: sendErr.errMsg || sendErr.message });
+        console.error('发送失败:', merchant.openid, sendErr);
+        // 如果是 43101（用户拒绝/未订阅），重置数据库状态
+        if (sendErr.errCode === 43101) {
+          await db.collection('merchants').doc(merchant._id).update({
+            data: { subscribed: false }
+          });
+        }
+        sendResults.push({ 
+          openid: merchant.openid, 
+          errCode: sendErr.errCode || -1, 
+          errMsg: sendErr.errMsg || sendErr.message 
+        });
       }
     }
 
