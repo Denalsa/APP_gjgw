@@ -9,31 +9,34 @@ const TEMPLATE_ID = 'Ui42b4ts_Z8uXJfIc5urZFwCP1SNV3J6KpphONj4kTY';
 
 exports.main = async (event, context) => {
   console.log('--- notifyMerchant start ---');
+  console.log('完整 event 对象:', JSON.stringify(event));
   try {
     const { orderInfo } = event;
     if (!orderInfo || !orderInfo.dishes || !orderInfo.total) {
       return { success: false, message: '订单信息不完整' };
     }
-
+    //本次新加  是不是最大boss?就是最大boss
+    const merchantOpenid = event.userInfo.openId;
+    console.log('收到的 merchantOpenid:', merchantOpenid);
     // 查询所有已订阅的商家
-    const merchantsRes = await db.collection('merchants')
-      .where({ subscribed: true })
-      .get();
+    //const merchantsRes = await db.collection('merchants')
+     // .where({ subscribed: true })
+     // .get();
 
-    if (merchantsRes.data.length === 0) {
-      return { success: false, message: '暂无商家订阅' };
-    }
-
+    //if (merchantsRes.data.length === 0) {
+    //  return { success: false, message: '暂无商家订阅' };
+    //}
+    const merchantsRes = { data: [{ openid: merchantOpenid }] };
     const { dishes, total, createTime, note } = orderInfo;
     const now = new Date(createTime || Date.now());
     const timeStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
     const dishNames = dishes.map(d => `${d.name}x${d.quantity}`).join('、');
 
     const msgData = {
-      thing1: { value: dishNames.substring(0, 20) },
-      amount2: { value: `¥${total}` },
-      time3: { value: timeStr },
-      thing4: { value: note || '无备注' }
+      thing2: { value: dishNames.substring(0, 20) },
+      amount10: { value: `¥${total}` },
+      time4: { value: timeStr },
+      thing9: { value: note || '无备注' }
     };
 
     const sendResults = [];

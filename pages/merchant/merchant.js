@@ -81,7 +81,8 @@ requestSubscribe() {
           .update({
             data: { subscribed: true }             })
           .then(updateRes => {
-            console.log('数据库更新结果:', updateRes);  // ← 加这行
+            console.log('stats 完整内容：', JSON.stringify(res.stats, null, 2));
+            
             that.setData({ subscribed: true });
             wx.showToast({ title: '已开启接单提醒', icon: 'success' });
           })

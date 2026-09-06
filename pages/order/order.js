@@ -71,9 +71,11 @@ refreshCart() {
         createTime: Date.now(),
         note: this.data.note || ''
       };
+      console.log('🔍 准备传给云函数的 merchantOpenid:', app.globalData.openid);
       wx.cloud.callFunction({
         name: 'notifymerchant',
-        data: { orderInfo }
+        data: { orderInfo },
+        merchantOpenid: app.globalData.openid // ← 加上这一行
       }).then(res => {
         const result = res.result;
         if (result.success && result.sendResults) {
