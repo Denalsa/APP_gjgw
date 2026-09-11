@@ -3,15 +3,10 @@ const app = getApp();
 
 Page({
   data: {
-    categories: [
-      { id: 1, name: '炒菜' },
-      { id: 2, name: '烧菜' },
-      { id: 3, name: '蒸菜' },
-      { id: 4, name: '煲汤' },
-      { id: 5, name: '融合菜' },
-      { id: 6, name: '一人食' },
-    ],
-    activeCategoryId: 1,       // 默认显示“炒菜”
+    categories: [ '炒菜', '炖菜', '凉菜','烧菜',
+     '一人食',  '融合菜'],
+    
+    activeCategoryId: '炒菜',       // 默认显示“炒菜”
     dishes: [],                // 所有菜品（从云数据库加载）
     currentDishes: [],         // 当前分类的菜品
     hotImages: [],             // 热门推荐图片（取前几个菜品）
@@ -42,6 +37,11 @@ Page({
         const cloudFiles = allDishes
           .filter(d => d.image && d.image.startsWith('cloud://'))
           .map(d => d.image);
+          
+        const finish = (list) => {
+          this.setData({ dishes: list, loading: false });
+          this.filterDishes();      // ★ 加载完成后立刻按默认分类过滤
+        };
         if (cloudFiles.length > 0) {
           wx.cloud.getTempFileURL({
             fileList: cloudFiles,
@@ -91,13 +91,17 @@ Page({
 
   // 切换分类
   switchCategory(e) {
-    const id = Number(e.currentTarget.dataset.id);
-    if (id === this.data.activeCategoryId) return;
-    this.setData({ activeCategoryId: id }, () => {
-      this.filterDishes();
+    const name = e.currentTarget.dataset.category;   // 取分类名
+    this.setData({ activeCategory: name }, () => {
+      this.filterDishes();   
     });
   },
-
+  // 新增筛选函数
+  filterDishes() {
+    const { dishes, activeCategory } = this.data;
+    const current = dishes.filter(d => d.category === activeCategory);
+    this.setData({ currentDishes: current });
+  },
   // 打开菜品详情（通过 data-id 传递）
   openDetail(e) {
     const id = e.currentTarget.dataset.id;
@@ -119,6 +123,16 @@ Page({
     const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
     const total = cart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
     this.setData({ cartCount: count, cartTotal: total.toFixed(2) });
+  },
+  // 点菜（当前页，无需跳转，仅高亮）
+  goMenu() {
+  // 当前已是菜单页，无需操作
+  },
+  // 跳转到“我的”（登录页）
+  goProfile() {
+    wx.navigateTo({
+      url: '/pages/login/login'
+    });
   },
 
   // 去购物车

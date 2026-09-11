@@ -12,12 +12,12 @@
     <scroll-view class="left-menu" scroll-y="true">
       <view
         wx:for="{{categories}}"
-        wx:key="id"
-        data-id="{{item._id}}"
+        wx:key="*this"
+        data-category="{{item}}"
         bindtap="switchCategory"
-        class="cat-item {{activeCategoryId === item._id ? 'active' : ''}}"
+        class="cat-item {{activeCategory === item ? 'active' : ''}}"
       >
-        {{item.name}}
+        {{item}}
       </view>
     </scroll-view>
 
@@ -37,5 +37,16 @@
   <view class="cart-bar" bindtap="openCart">
     <text>🛒 购物车（{{cartCount}} 件）</text>
     <text>合计：¥{{cartTotal}}</text>
+  </view>
+</view>
+<!-- 原有的 cart-bar 保持不变 -->
+
+<!-- 新增底部导航栏 -->
+<view class="bottom-nav">
+  <view class="nav-item active" bindtap="goMenu">
+    <text class="nav-text">点菜</text>
+  </view>
+  <view class="nav-item" bindtap="goProfile">
+    <text class="nav-text">我的</text>
   </view>
 </view>

@@ -55,6 +55,7 @@
 .dish-list {
   flex: 1;
   padding: 16rpx;
+  padding-bottom: 260rpx; /* 预留出悬浮购物车 + 底部导航栏的高度，避免内容被遮挡 */
 }
 
 .dish-item {
@@ -88,10 +89,49 @@
 }
 
 .cart-bar {
-  padding: 24rpx;
-  background: #242424;
-  color: #fff;
+  position: fixed;
+  bottom: 120rpx;           /* 100rpx的导航栏 + 20rpx的间距，防止重叠 */
+  left: 30rpx;
+  right: 30rpx;
+  height: 100rpx;
+  background: #fff;         /* 白底 */
+  border-radius: 50rpx;     /* 大圆角，更圆润 */
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.15); /* 阴影增加悬浮感 */
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: 0 30rpx;
   font-size: 30rpx;
+  color: #333;
+  z-index: 99;              /* 保证在菜品内容之上 */
+}
+/* 新增底部导航栏 */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around; /* 分散对齐 */
+  align-items: center;
+  height: 100rpx;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+}
+
+.nav-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.nav-item.active .nav-text {
+  color: #ff7d4d;
+  font-weight: 700;
 }
