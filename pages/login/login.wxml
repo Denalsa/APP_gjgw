@@ -22,13 +22,13 @@
   <view class="role-group" wx:if="{{!showMerchantLogin}}">
     <view class="role-option customer-box" bindtap="goCustomer">
       <view class="role-icon">🙋</view>
-      <view class="role-name">我是顾客</view>
+      <view class="role-name">我要点菜</view>
       <view class="role-desc">浏览菜单 · 点餐下单</view>
     </view>
 
     <view class="role-option merchant-box" bindtap="showMerchant">
       <view class="role-icon">👨‍🍳</view>
-      <view class="role-name">我是商家</view>
+      <view class="role-name">管理菜单</view>
       <view class="role-desc">管理菜品 · 新增菜式</view>
     </view>
   </view>

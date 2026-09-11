@@ -5,12 +5,11 @@ Page({
   data: {
     categories: [
       { id: 1, name: '炒菜' },
-      { id: 2, name: '炖菜' },
+      { id: 2, name: '烧菜' },
       { id: 3, name: '蒸菜' },
       { id: 4, name: '煲汤' },
-      { id: 5, name: '面包' },
-      { id: 6, name: '蛋糕' },
-      { id: 7, name: '西餐正餐' }
+      { id: 5, name: '融合菜' },
+      { id: 6, name: '一人食' },
     ],
     activeCategoryId: 1,       // 默认显示“炒菜”
     dishes: [],                // 所有菜品（从云数据库加载）

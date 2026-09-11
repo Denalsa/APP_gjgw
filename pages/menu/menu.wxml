@@ -13,9 +13,9 @@
       <view
         wx:for="{{categories}}"
         wx:key="id"
-        data-id="{{item.id}}"
+        data-id="{{item._id}}"
         bindtap="switchCategory"
-        class="cat-item {{activeCategoryId === item.id ? 'active' : ''}}"
+        class="cat-item {{activeCategoryId === item._id ? 'active' : ''}}"
       >
         {{item.name}}
       </view>
@@ -23,7 +23,7 @@
 
     <scroll-view class="dish-list" scroll-y="true">
       <view class="card dish-item" wx:for="{{currentDishes}}" wx:key="id">
-        <image class="dish-image" src="{{item.image}}" mode="aspectFill" data-id="{{item.id}}" bindtap="openDetail"></image>
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill" data-id="{{item._id}}" bindtap="openDetail"></image>
         <view class="info">
           <text class="name">{{item.name}}</text>
           <text class="stock">库存：{{item.stock}}</text>

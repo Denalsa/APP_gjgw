@@ -4,7 +4,7 @@
     <text class="name">{{dish.name}}</text>
     <text class="price">¥{{dish.price}}</text>
     <text class="desc">{{dish.description}}</text>
-    <view class="tag">分类：{{dish.categoryName}}</view>
+    <view class="tag">分类：{{dish.category}}</view>
     <view class="ingredients">
       <text class="subtitle">原材料</text>
       <text wx:for="{{dish.ingredients}}" wx:key="*this">• {{item}}</text>
