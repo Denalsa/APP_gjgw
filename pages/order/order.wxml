@@ -42,4 +42,41 @@
     <text class="order-id" wx:if="{{orderId}}">订单编号：{{orderId}}</text>
   </view>
   <button class="back-btn" bindtap="goHome">返回首页</button>
+
+<!-- 资料确认弹窗 -->
+<view class="profile-modal" wx:if="{{showProfileModal}}">
+  <view class="profile-mask" bindtap="closeProfileModal"></view>
+  <view class="profile-content">
+    <view class="profile-title">请确认您的资料</view>
+    <view class="profile-desc">下单需要获取您的头像和昵称</view>
+    
+    <!-- 头像选择 -->
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image class="avatar-preview" src="{{userAvatar || defaultAvatar}}"></image>
+      <text class="avatar-hint">点击选择头像</text>
+    </button>
+    
+    <!-- 昵称输入 -->
+    <input 
+      class="nickname-input" 
+      type="nickname" 
+      placeholder="请输入昵称" 
+      value="{{userNickname}}" 
+      bindinput="onNicknameInput" 
+    />
+    
+    <view class="profile-actions">
+      <button class="profile-cancel" bindtap="closeProfileModal">取消</button>
+      <button class="profile-confirm" bindtap="confirmProfile">确认并下单</button>
+    </view>
+  </view>
+</view>
+
+
+
+
+
+
+
+
 </view>

@@ -7,7 +7,12 @@ Page({
     note: '',
     latestOrder: null,
     orderSubmitted: false,   // 新增：标记是否已提交
-    orderId: ''              // 新增：云函数返回的订单ID
+    orderId: '',              // 新增：云函数返回的订单ID
+      // 新增
+    showProfileModal: false,
+    userAvatar: '',
+    userNickname: '',
+    defaultAvatar: 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagd' // 微信默认头像
   },
 
   onShow() {
@@ -44,11 +49,26 @@ refreshCart() {
   },
 
   submitOrder() {
+    const cachedProfile = wx.getStorageSync('userProfile');
+    if (cachedProfile && cachedProfile.avatarUrl && cachedProfile.nickName) {
+      this.setData({
+        userAvatar: cachedProfile.avatarUrl,
+        userNickname: cachedProfile.nickName
+      });
+      this.doSubmitOrder();
+      return;
+    }
+  // 没有资料，弹出弹窗
+      this.setData({ showProfileModal: true });
+  },
+// 实际执行下单
+  doSubmitOrder() {
     const cart = this.data.cart;
     if (!cart || cart.length === 0) {
       wx.showToast({ title: '购物车为空', icon: 'none' });
       return;
     }
+    
 
     wx.showLoading({ title: '提交中...' });
 
@@ -113,5 +133,40 @@ onImageError(e) {
   const cart = this.data.cart;
   cart[index].image = '/images/default-food.png';
   this.setData({ cart });
+},
+// 选择头像
+onChooseAvatar(e) {
+  const { avatarUrl } = e.detail;
+  this.setData({ userAvatar: avatarUrl });
+},
+
+// 输入昵称
+onNicknameInput(e) {
+  this.setData({ userNickname: e.detail.value });
+},
+
+// 关闭弹窗
+closeProfileModal() {
+  this.setData({ showProfileModal: false });
+},
+
+// 确认资料，继续下单
+confirmProfile() {
+  if (!this.data.userNickname.trim()) {
+    wx.showToast({ title: '请输入昵称', icon: 'none' });
+    return;
+  }
+  if (!this.data.userAvatar) {
+    wx.showToast({ title: '请选择头像', icon: 'none' });
+    return;
+  }
+  // 缓存用户资料
+  wx.setStorageSync('userProfile', {
+    avatarUrl: this.data.userAvatar,
+    nickName: this.data.userNickname
+  });
+  // 关闭弹窗，执行下单
+  this.setData({ showProfileModal: false });
+  this.doSubmitOrder();
 }
 });
