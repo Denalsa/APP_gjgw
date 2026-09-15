@@ -11,7 +11,7 @@ Page({
   // 进入客户模式
   goCustomer() {
     app.setUserRole('customer');
-    wx.reLaunch({ url: '/pages/index/index' });
+    wx.reLaunch({ url: '/pages/menu/menu' });
   },
 
   // 显示商家登录入口

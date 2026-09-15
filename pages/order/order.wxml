@@ -2,7 +2,6 @@
 <view wx:if="{{!orderSubmitted}}">
   <view class="cart-list">
     <view class="cart-item" wx:for="{{cart}}" wx:key="id">
-    <!--   <image class="item-img" src="{{item.image}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>-->
       <view class="item-info">
         <text class="item-name">{{item.name}}</text>
         <text class="item-price">¥{{item.price}} × {{item.quantity}}</text>
@@ -27,7 +26,6 @@
   <view class="order-detail">
     <text class="detail-title">订单详情：</text>
     <view class="cart-item" wx:for="{{cart}}" wx:key="id">
-    <!--  <image class="item-img" src="{{item.image}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>-->
       <view class="item-info">
         <text class="item-name">{{item.name}}</text>
         <text class="item-price">¥{{item.price}} × {{item.quantity}}</text>
@@ -40,8 +38,10 @@
       <text>总价：¥{{total}}</text>
     </view>
     <text class="order-id" wx:if="{{orderId}}">订单编号：{{orderId}}</text>
+
+    <button class="back-btn" bindtap="goHome">返回首页</button>
   </view>
-  <button class="back-btn" bindtap="goHome">返回首页</button>
+</view>
 
 <!-- 资料确认弹窗 -->
 <view class="profile-modal" wx:if="{{showProfileModal}}">
@@ -50,13 +50,11 @@
     <view class="profile-title">请确认您的资料</view>
     <view class="profile-desc">下单需要获取您的头像和昵称</view>
     
-    <!-- 头像选择 -->
     <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
       <image class="avatar-preview" src="{{userAvatar || defaultAvatar}}"></image>
       <text class="avatar-hint">点击选择头像</text>
     </button>
     
-    <!-- 昵称输入 -->
     <input 
       class="nickname-input" 
       type="nickname" 
@@ -70,13 +68,4 @@
       <button class="profile-confirm" bindtap="confirmProfile">确认并下单</button>
     </view>
   </view>
-</view>
-
-
-
-
-
-
-
-
 </view>

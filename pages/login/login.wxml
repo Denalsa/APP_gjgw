@@ -1,8 +1,7 @@
 <!-- pages/login/login.wxml -->
 <view class="login-container">
   <view class="login-header">
-    <text class="app-title">🍽️ 今日点菜</text>
-    <text class="app-subtitle">请选择您的身份</text>
+    <text class="app-title">请选择</text>
   </view>
 
   <!-- 普通商家登录区（隐藏） -->

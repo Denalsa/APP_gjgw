@@ -1,5 +1,10 @@
 <view class="container" wx:if="{{dish}}">
-  <image class="banner" src="{{dish.image}}" mode="aspectFill"></image>
+  <image class="banner" 
+         src="{{dish.image}}" 
+         mode="widthFix"
+         bindtap="previewImage" 
+         data-url="{{dish.image}}"         
+         ></image>
   <view class="card">
     <text class="name">{{dish.name}}</text>
     <text class="price">¥{{dish.price}}</text>

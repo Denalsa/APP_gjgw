@@ -7,6 +7,17 @@ Page({
     loading: true
   },
 
+  previewImage(e) {
+    const url = e.currentTarget.dataset.url;
+    if (!url) return;
+  
+    wx.previewImage({
+      current: url,      // 当前显示图片的链接
+      urls: [url]        // 需要预览的图片链接列表（这里只预览当前一张）
+    });
+  },
+
+
   onLoad(options) {
     const dishId = options.id;
     if (!dishId) {

@@ -71,12 +71,17 @@ refreshCart() {
     
 
     wx.showLoading({ title: '提交中...' });
-
+    const userProfile = {
+      avatarUrl: this.data.userAvatar,
+      nickName: this.data.userNickname
+    };
+  
     wx.cloud.callFunction({
       name: 'createorder',       // ← 注意你仓库里的实际目录名
       data: {
         cart: cart,
-        note: this.data.note || ''
+        note: this.data.note || '',
+        userProfile: userProfile   // ← 将用户资料传给云函数
       }
     }).then(res => {
       wx.hideLoading();
@@ -89,7 +94,8 @@ refreshCart() {
         dishes: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
         total: this.data.total,
         createTime: Date.now(),
-        note: this.data.note || ''
+        note: this.data.note || '',
+        userProfile: userProfile   // ← 一并传给通知云函数
       };
       console.log('🔍 准备传给云函数的 merchantOpenid:', app.globalData.openid);
       wx.cloud.callFunction({

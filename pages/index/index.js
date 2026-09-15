@@ -14,16 +14,10 @@ Page({
   },
 
   onLoad() {
-    // 若没有选择角色，跳转登录页
-   // const userRole = app.globalData.userRole || wx.getStorageSync('userRole');
-   // if (!userRole) {
-   //   wx.reLaunch({ url: '/pages/login/login' });
-   //   return;
-   // }
-
     // 商家无法进入客户首页，直接重定向到商家后台
-    if (userRole === 'merchant') {
-      wx.reLaunch({ url: '/pages/merchant/merchant' });
+    const userRole = app.globalData.userRole || wx.getStorageSync('userRole');  // ← 可能被删了
+    if (!userRole) {
+      wx.reLaunch({ url: '/pages/login/login' });   // ← 可能被删了
       return;
     }
 
