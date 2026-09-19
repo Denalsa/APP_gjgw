@@ -17,7 +17,7 @@ exports.main = async (event, context) => {
     }
     //本次新加  是不是最大boss?就是最大boss
     const merchantOpenid = event.userInfo.openId;
-    console.log('收到的 merchantOpenid:', merchantOpenid);
+    console.log('收到的 merchantOpenid:', JSON.stringify(merchantOpenid));
     // 查询所有已订阅的商家
     //const merchantsRes = await db.collection('merchants')
      // .where({ subscribed: true })

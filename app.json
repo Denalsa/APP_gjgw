@@ -7,7 +7,8 @@
     "pages/cart/cart",
     "pages/order/order",
     "pages/merchant/merchant",
-    "pages/addDish/addDish"
+    "pages/addDish/addDish",
+    "pages/fridge/fridge"
   ],
   "window": {
     "navigationBarTitleText": "今日点菜",

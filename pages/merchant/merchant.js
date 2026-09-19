@@ -65,11 +65,11 @@ Page({
 // 请求订阅消息
 requestSubscribe() {
   const that = this; // 保存 this 指向，后续回调中使用
-  console.log('当前 openid:', app.globalData.openid);  // ← 加这行
+  console.log('当前 openid:', JSON.stringify(app.globalData.openid));  // ← 加这行
   wx.requestSubscribeMessage({
     tmplIds: [TEMPLATE_ID],
     success: (res) => {
-      console.log('订阅结果:', res);  // ← 加这行
+      console.log('订阅结果:', JSON.stringify(res));  // ← 加这行
       // 检查用户对特定模板的订阅结果
       if (res[TEMPLATE_ID] === 'accept') {
         // ★ 关键：用户同意后，在云数据库中标记“已订阅”
@@ -102,7 +102,10 @@ requestSubscribe() {
   });
 } ,
   //以上代码为提醒商家消息版本增加，以下从云数据库加载菜品
-
+  
+  goFridge() {
+    wx.navigateTo({ url: '/pages/fridge/fridge' });
+  },
   // 下拉刷新
   onPullDownRefresh() {
     this.setData({ refreshing: true });

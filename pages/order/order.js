@@ -97,7 +97,7 @@ refreshCart() {
         note: this.data.note || '',
         userProfile: userProfile   // ← 一并传给通知云函数
       };
-      console.log('🔍 准备传给云函数的 merchantOpenid:', app.globalData.openid);
+      console.log('🔍 准备传给云函数的 merchantOpenid:', JSON.stringify(app.globalData.openid));
       wx.cloud.callFunction({
         name: 'notifymerchant',
         data: { orderInfo },

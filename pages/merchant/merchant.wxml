@@ -13,9 +13,12 @@
   </view>
 
   <view class="stats-bar">
-    <text class="stats-text">共 {{dishes.length}} 道菜品</text>
-    <button class="add-btn" bindtap="goAddDish" size="mini">+ 新增菜品</button>
+  <text class="stats-text">共 {{dishes.length}} 道菜品</text>
+  <view class="header-actions">
+    <button class="add-btn" bindtap="goAddDish" size="mini" type="primary">+ 新增菜品</button>
+    <button class="add-btn" bindtap="goFridge" size="mini" type="default" style="margin-left: 12rpx;">🧊 冰箱管理</button>
   </view>
+</view>
 
   <view class="dish-list" wx:if="{{!loading && dishes.length > 0}}">
     <view class="dish-item" wx:for="{{dishes}}" wx:key="_id">

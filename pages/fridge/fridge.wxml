@@ -1,0 +1,100 @@
+<!-- pages/fridge/fridge.wxml -->
+<view class="fridge-container">
+  <!-- 顶部统计 -->
+  <view class="urgent-bar" wx:if="{{urgentCount > 0}}">
+    <text class="urgent-icon">⚠️</text>
+    <text class="urgent-text">急需处理 {{urgentCount}} 种食材</text>
+  </view>
+  <view class="urgent-bar safe" wx:else>
+    <text class="safe-icon">✅</text>
+    <text class="safe-text">所有食材状态正常</text>
+  </view>
+
+  <!-- 主体：左右分栏 -->
+  <view class="main-body">
+    <!-- 左侧分类 -->
+    <scroll-view class="left-category" scroll-y="true">
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="switchCategory"
+        class="cat-item {{activeCategory === item.id ? 'active' : ''}}"
+      >
+        <text class="cat-icon">{{item.icon}}</text>
+        <text class="cat-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 右侧食材列表 -->
+    <scroll-view class="right-ingredients" scroll-y="true">
+      <!-- 新增按钮 -->
+      <view class="add-bar" bindtap="openAddModal">
+        <text class="add-icon">+</text>
+        <text class="add-text">新增食材</text>
+      </view>
+
+      <!-- 食材列表 -->
+      <view class="ingredient-item" wx:for="{{currentIngredients}}" wx:key="_id">
+        <view class="ingredient-header">
+          <text class="ingredient-name">{{item.name}}</text>
+          <text class="status-tag {{item.statusClass}}">{{item.statusText}}</text>
+        </view>
+        <view class="ingredient-info">
+          <text class="info-text">入库：{{item.storageDate}}</text>
+          <text class="info-text">存放：{{item.days}} 天</text>
+        </view>
+        <view class="ingredient-actions">
+          <button class="action-btn edit-btn" size="mini" data-item="{{item}}" bindtap="openEditModal">修改</button>
+          <button class="action-btn delete-btn" size="mini" data-id="{{item._id}}" bindtap="deleteIngredient">删除</button>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!loading && currentIngredients.length === 0}}">
+        <text class="empty-text">该分类下暂无食材</text>
+      </view>
+
+      <!-- 加载中 -->
+      <view class="loading-state" wx:if="{{loading}}">
+        <text>加载中...</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 新增/编辑弹窗 -->
+  <view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal"></view>
+  <view class="modal-box" wx:if="{{showModal}}">
+    <view class="modal-title">{{modalTitle}}</view>
+    
+    <view class="form-item">
+      <text class="form-label">食材名称</text>
+      <input class="form-input" placeholder="请输入食材名称" value="{{formData.name}}" bindinput="onInputName" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">食材分类</text>
+      <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onInputCategory">
+        <view class="picker-view">
+          <text>{{formData.category}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">入库日期</text>
+      <picker mode="date" value="{{formData.storageDate}}" bindchange="onDateChange">
+        <view class="picker-view">
+          <text>{{formData.storageDate || '请选择日期'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="modal-actions">
+      <button class="modal-btn cancel-btn" bindtap="closeModal">取消</button>
+      <button class="modal-btn confirm-btn" bindtap="saveIngredient">保存</button>
+    </view>
+  </view>
+</view>
