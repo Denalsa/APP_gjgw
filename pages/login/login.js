@@ -46,7 +46,7 @@ Page({
     wx.showLoading({ title: '验证中...' });
 
     wx.cloud.callFunction({
-      name: 'getOpenid',
+      name: 'getopenid',
       data: { password }
     }).then(res => {
       wx.hideLoading();

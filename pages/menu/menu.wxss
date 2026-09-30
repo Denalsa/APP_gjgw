@@ -52,11 +52,49 @@
   font-weight: 700;
 }
 
+.right-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .dish-list {
   flex: 1;
   padding: 16rpx;
-  padding-bottom: 260rpx; /* 预留出悬浮购物车 + 底部导航栏的高度，避免内容被遮挡 */
+  overflow-y: auto;
 }
+
+.search-bar {
+  position: relative;
+  padding: 12rpx 16rpx;
+  background: #f7f7f7;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  height: 64rpx;
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 0 60rpx 0 24rpx;
+  font-size: 26rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.search-clear {
+  position: absolute;
+  right: 32rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 26rpx;
+  color: #999;
+  padding: 10rpx;
+}
+
 
 .dish-item {
   display: flex;

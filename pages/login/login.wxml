@@ -9,7 +9,7 @@
       <image class="avatar" src="{{userAvatar || defaultAvatar}}" mode="aspectFill"></image>
       <view class="user-info">
         <text class="nickname">{{userNickname || '点击登录'}}</text>
-        <text class="signature">一日三餐 两人两猫 好好吃饭</text>
+        <text class="signature">一日三餐 好好吃饭</text>
       </view>
       <view class="edit-profile">编辑</view>
     </view>

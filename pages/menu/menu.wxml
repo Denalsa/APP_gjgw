@@ -2,7 +2,7 @@
   <scroll-view class="top-hot" scroll-x="true" show-scrollbar="false">
     <view class="hot-wrap">
       <view class="hot-item" wx:for="{{hotImages}}" wx:key="id">
-        <image src="{{item.image}}" mode="aspectFill"></image>
+        <image src="{{item.image}}" mode="aspectFill"data-id="{{item.id}}" bindtap="openDetail"></image>
         <text>{{item.name}}</text>
       </view>
     </view>
@@ -21,17 +21,33 @@
       </view>
     </scroll-view>
 
-    <scroll-view class="dish-list" scroll-y="true">
-      <view class="card dish-item" wx:for="{{currentDishes}}" wx:key="id">
-        <image class="dish-image" src="{{item.image}}" mode="aspectFill" data-id="{{item._id}}" bindtap="openDetail"></image>
-        <view class="info">
-          <text class="name">{{item.name}}</text>
-          <text class="stock">库存：{{item.stock}}</text>
-          <text class="price">¥{{item.price}}</text>
-          <button class="primary-btn" size="mini" data-dish="{{item}}" bindtap="addDish">点菜</button>
-        </view>
+    <!-- ★ 右侧区域：固定搜索框 + 可滚动列表 -->
+    <view class="right-area">
+      <!-- 搜索框固定在顶部，不滚动 -->
+      <view class="search-bar">
+        <input 
+          class="search-input" 
+          placeholder="搜索菜名或食材" 
+          value="{{searchKeyword}}" 
+          bindinput="onSearchInput" 
+          confirm-type="search"
+        />
+        <view class="search-clear" wx:if="{{searchKeyword}}" bindtap="clearSearch">✕</view>
       </view>
-    </scroll-view>
+
+      <!-- 菜品列表可滚动 -->
+      <scroll-view class="dish-list" scroll-y="true">
+        <view class="card dish-item" wx:for="{{currentDishes}}" wx:key="id">
+          <image class="dish-image" src="{{item.image}}" mode="aspectFill" data-id="{{item._id}}" bindtap="openDetail"></image>
+          <view class="info">
+            <text class="name">{{item.name}}</text>
+            <text class="stock">库存：{{item.stock}}</text>
+            <text class="price">¥{{item.price}}</text>
+            <button class="primary-btn" size="mini" data-dish="{{item}}" bindtap="addDish">点菜</button>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 
   <view class="cart-bar" bindtap="openCart">
@@ -39,9 +55,8 @@
     <text>合计：¥{{cartTotal}}</text>
   </view>
 </view>
-<!-- 原有的 cart-bar 保持不变 -->
 
-<!-- 新增底部导航栏 -->
+<!-- 底部导航栏 -->
 <view class="bottom-nav">
   <view class="nav-item active" bindtap="goMenu">
     <text class="nav-text">点菜</text>
