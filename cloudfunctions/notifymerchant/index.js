@@ -28,6 +28,34 @@ exports.main = async (event, context) => {
     //}
     const merchantsRes = { data: [{ openid: merchantOpenid }] };
     const { dishes, total, createTime, note } = orderInfo;
+
+    // ★ 对比冰箱库存 新增代码
+    let needPrepare = [];      // 冰箱没有的
+    let mayNeedPrepare = [];   // 冰箱已有的
+    if (ingredients.length > 0) {
+      const fridgeRes = await db.collection('ingredients').get();
+      const fridgeNames = fridgeRes.data.map(item => item.name);
+      ingredients.forEach(ing => {
+        if (fridgeNames.includes(ing)) {
+          mayNeedPrepare.push(ing);
+        } else {
+          needPrepare.push(ing);
+        }
+      });
+    }
+
+    // ★ 构建两种提示
+    let prepTip = '';
+    if (needPrepare.length > 0) {
+      prepTip += `需采购：${needPrepare.join('、')}；`;
+    }
+    if (mayNeedPrepare.length > 0) {
+      prepTip += `冰箱已有：${mayNeedPrepare.join('、')}`;
+    }
+    if (prepTip === '') prepTip = '无原材料信息';
+    if (prepTip.length > 20) prepTip = prepTip.substring(0, 20) + '...';
+
+    //老代码
     const now = new Date(createTime || Date.now());
     const timeStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
     const dishNames = dishes.map(d => `${d.name}x${d.quantity}`).join('、');
