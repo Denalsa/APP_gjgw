@@ -1,34 +1,71 @@
-<!-- pages/login/login.wxml -->
-<view class="login-container">
-  <view class="login-header">
-    <text class="app-title">请选择</text>
+<view class="page-container">
+  <!-- 顶部背景图 -->
+  <image class="top-bg" src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=800&q=80" mode="aspectFill"></image>
+
+  <!-- 个人中心主内容 -->
+  <view class="main-content">
+    <!-- 用户信息悬浮卡片 -->
+    <view class="user-card">
+      <image class="avatar" src="{{userAvatar || defaultAvatar}}" mode="aspectFill"></image>
+      <view class="user-info">
+        <text class="nickname">{{userNickname || '点击登录'}}</text>
+        <text class="signature">一日三餐 两人两猫 好好吃饭</text>
+      </view>
+      <view class="edit-profile">编辑</view>
+    </view>
+
+
+    <!-- 核心功能白色卡片 -->
+    <view class="function-card">
+      <view class="card-title">常用功能</view>
+      <view class="grid-list">
+        <view class="grid-item" bindtap="goHistory">
+          <text class="grid-icon">📋</text>
+          <text class="grid-text">历史订单</text>
+        </view>
+
+        <view class="grid-item" bindtap="showMerchant">
+          <text class="grid-icon">🏪</text>
+          <text class="grid-text">管理菜单</text>
+        </view>
+        <view class="grid-item" bindtap="checkFridge">
+          <text class="grid-icon">🧊</text>
+          <text class="grid-text">冰箱管理</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="safe-bottom"></view>
   </view>
 
-  <!-- 普通商家登录区（隐藏） -->
-  <view class="role-group" wx:if="{{showMerchantLogin}}">
-    <view class="role-title">商家登录</view>
-    <view class="form-group">
-      <input class="password-input" type="password" placeholder="请输入商家密码"
-             value="{{password}}" bindinput="onPasswordInput" focus />
-    </view>
-    <view class="error-msg" wx:if="{{passwordError}}">{{passwordError}}</view>
-    <view class="btn-group">
-      <button class="btn btn-cancel" bindtap="hideMerchant">返回</button>
-      <button class="btn btn-confirm" bindtap="merchantLogin">确 认</button>
+  <!-- 商家登录弹窗 -->
+  <view class="profile-modal" wx:if="{{showMerchantLogin}}">
+    <view class="profile-mask" bindtap="hideMerchant"></view>
+    <view class="profile-content">
+      <view class="profile-title">商家验证</view>
+      <view class="profile-desc">请输入商家密码以进入管理后台</view>
+      <input 
+        class="nickname-input" 
+        type="password" 
+        placeholder="请输入商家密码" 
+        value="{{password}}" 
+        bindinput="onPasswordInput" 
+      />
+      <view class="error-msg" wx:if="{{passwordError}}">{{passwordError}}</view>
+      <view class="profile-actions">
+        <button class="profile-cancel" bindtap="hideMerchant">取消</button>
+        <button class="profile-confirm" bindtap="merchantLogin">确认</button>
+      </view>
     </view>
   </view>
 
-  <view class="role-group" wx:if="{{!showMerchantLogin}}">
-    <view class="role-option customer-box" bindtap="goCustomer">
-      <view class="role-icon">🙋</view>
-      <view class="role-name">我要点菜</view>
-      <view class="role-desc">浏览菜单 · 点餐下单</view>
+  <!-- 底部导航栏（与菜单页保持一致） -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="goMenu">
+      <text class="nav-text">点菜</text>
     </view>
-
-    <view class="role-option merchant-box" bindtap="showMerchant">
-      <view class="role-icon">👨‍🍳</view>
-      <view class="role-name">管理菜单</view>
-      <view class="role-desc">管理菜品 · 新增菜式</view>
+    <view class="nav-item active" bindtap="goProfile">
+      <text class="nav-text">我的</text>
     </view>
   </view>
 </view>

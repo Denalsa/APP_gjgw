@@ -1,35 +1,41 @@
-// pages/login/login.js
 const app = getApp();
 
 Page({
   data: {
+    userAvatar: '',
+    userNickname: '',
+    defaultAvatar: 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagd',
     showMerchantLogin: false,
     password: '',
     passwordError: ''
   },
 
-  // 进入客户模式
-  goCustomer() {
-    app.setUserRole('customer');
-    wx.reLaunch({ url: '/pages/menu/menu' });
+  onShow() {
+    const profile = wx.getStorageSync('userProfile');
+    if (profile) {
+      this.setData({
+        userAvatar: profile.avatarUrl || '',
+        userNickname: profile.nickName || ''
+      });
+    }
   },
 
-  // 显示商家登录入口
+  goHistory() {
+    wx.showToast({ title: '历史订单功能开发中', icon: 'none' });
+  },
+
   showMerchant() {
     this.setData({ showMerchantLogin: true, password: '', passwordError: '' });
   },
 
-  // 隐藏商家登录
   hideMerchant() {
     this.setData({ showMerchantLogin: false, password: '', passwordError: '' });
   },
 
-  // 输入密码
   onPasswordInput(e) {
     this.setData({ password: e.detail.value, passwordError: '' });
   },
 
-  // 商家登录（通过云函数验证）
   merchantLogin() {
     const password = this.data.password.trim();
     if (!password) {
@@ -38,17 +44,16 @@ Page({
     }
 
     wx.showLoading({ title: '验证中...' });
-    wx.setStorageSync('merchantPwd', this.data.password.trim());
+
     wx.cloud.callFunction({
-      name: 'getopenid',
+      name: 'getOpenid',
       data: { password }
     }).then(res => {
       wx.hideLoading();
       const result = res.result;
       if (result.success) {
-        app.globalData.openid = result.openid;
-        wx.setStorageSync('openid', result.openid);  // 顺便缓存
         app.setUserRole('merchant', result.merchantInfo);
+        wx.setStorageSync('merchantPwd', password);
         wx.reLaunch({ url: '/pages/merchant/merchant' });
       } else {
         this.setData({ passwordError: result.message || '密码错误' });
@@ -58,5 +63,23 @@ Page({
       console.error('登录失败', err);
       this.setData({ passwordError: '登录失败，请稍后重试' });
     });
+  },
+
+  checkFridge() {
+    if (app.globalData.userRole === 'merchant') {
+      wx.navigateTo({ url: '/pages/fridge/fridge' });
+    } else {
+      wx.showToast({ title: '请先登录商家账号', icon: 'none' });
+    }
+  },
+
+  // 底部导航栏：跳转到菜单页
+  goMenu() {
+    wx.reLaunch({ url: '/pages/menu/menu' });
+  },
+
+  // 底部导航栏：当前已在“我的”，无需跳转
+  goProfile() {
+    // 当前页面就是“我的”
   }
 });
