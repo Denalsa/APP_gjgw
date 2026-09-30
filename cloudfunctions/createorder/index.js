@@ -6,6 +6,17 @@ exports.main = async (event, context) => {
   const { cart, note } = event;
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   try {
+    // ★ 查询菜品原材料
+    const dishIds = cart.map(item => item._id || item.id).filter(Boolean);
+    let ingredients = [];
+    if (dishIds.length > 0) {
+      const dishesRes = await db.collection('dishes')
+        .where({ _id: db.command.in(dishIds) })
+        .field({ ingredients: true })
+        .get();
+      const all = dishesRes.data.flatMap(d => d.ingredients || []);
+      ingredients = [...new Set(all)]; // 去重
+    }
     const res = await db.collection('orders').add({
       data: {
         cart,
