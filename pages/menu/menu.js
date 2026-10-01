@@ -157,6 +157,7 @@ Page({
   goProfile() {
     wx.navigateTo({ url: '/pages/login/login' });
   },
+  
 
   openCart() {
     wx.navigateTo({ url: '/pages/cart/cart' });
