@@ -33,7 +33,8 @@ exports.main = async (event, context) => {
         dishes: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
         total,
         createTime: Date.now(),
-        note: note || ''
+        note: note || '',
+        ingredients: ingredients  // ★ 必须传出去
       }
     };
   } catch (e) {
