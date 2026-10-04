@@ -53,15 +53,19 @@ Page({
       const result = res.result;
       if (result.success) {
         app.setUserRole('merchant', result.merchantInfo);
+        // ★ 新增：保存商家记录的 _id 和 openid
+        wx.setStorageSync('merchantId', result.merchantInfo.merchantId);
         wx.setStorageSync('merchantPwd', password);
         wx.reLaunch({ url: '/pages/merchant/merchant' });
       } else {
         this.setData({ passwordError: result.message || '密码错误' });
+
       }
     }).catch(err => {
       wx.hideLoading();
       console.error('登录失败', err);
       this.setData({ passwordError: '登录失败，请稍后重试' });
+
     });
   },
 

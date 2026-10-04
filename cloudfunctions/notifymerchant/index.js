@@ -9,18 +9,27 @@ exports.main = async (event, context) => {
   console.log('--- notifyMerchant start ---');
   try {
     const { orderInfo, orderId } = event;
+    console.log('收到的 orderInfo:', JSON.stringify(orderInfo));
+
     if (!orderInfo || !orderInfo.dishes || !orderInfo.total) {
       return { success: false, message: '订单信息不完整' };
     }
 
+    // ★ 1. 解构出 ingredients
     const { dishes, total, createTime, note, ingredients = [] } = orderInfo;
+    console.log('解构出的 ingredients:', JSON.stringify(ingredients));
 
-    // ★ 对比冰箱库存
+    // ★ 2. 查询冰箱库存并对比
     let needPrepare = [];
     let mayNeedPrepare = [];
+    
     if (ingredients.length > 0) {
       const fridgeRes = await db.collection('ingredients').get();
+      console.log('冰箱集合查询到:', fridgeRes.data.length, '条记录');
+      
       const fridgeNames = fridgeRes.data.map(item => item.name);
+      console.log('冰箱里的食材名称:', JSON.stringify(fridgeNames));
+      
       ingredients.forEach(ing => {
         if (fridgeNames.includes(ing)) {
           mayNeedPrepare.push(ing);
@@ -29,8 +38,11 @@ exports.main = async (event, context) => {
         }
       });
     }
+    
+    console.log('needPrepare:', JSON.stringify(needPrepare));
+    console.log('mayNeedPrepare:', JSON.stringify(mayNeedPrepare));
 
-    // ★ 通知里只显示简短提示
+    // ★ 3. 构建简短提示
     let shortTip = '';
     if (needPrepare.length > 0) {
       shortTip = '缺:' + needPrepare.join('、');
@@ -40,17 +52,14 @@ exports.main = async (event, context) => {
       shortTip = '无食材信息';
     }
     if (shortTip.length > 20) shortTip = shortTip.substring(0, 17) + '...';
+    console.log('最终 shortTip:', shortTip);
 
-    // ★ 完整对比结果写回订单记录
+    // ★ 4. 写回订单
     if (orderId) {
       try {
         await db.collection('orders').doc(orderId).update({
           data: {
-            ingredientCompare: {
-              needPrepare,
-              mayNeedPrepare,
-              allIngredients: ingredients
-            }
+            ingredientCompare: { needPrepare, mayNeedPrepare, allIngredients: ingredients }
           }
         });
       } catch (e) {
@@ -58,6 +67,7 @@ exports.main = async (event, context) => {
       }
     }
 
+    // ★ 5. 发送订阅消息
     const now = new Date(createTime || Date.now());
     const timeStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
     const dishNames = dishes.map(d => `${d.name}x${d.quantity}`).join('、');
@@ -68,13 +78,12 @@ exports.main = async (event, context) => {
       time4: { value: timeStr },
       thing9: { value: shortTip }
     };
+    console.log('msgData:', JSON.stringify(msgData));
 
-    // 查询订阅商家并发送
-    const merchantsRes = await db.collection('merchants')
-      .where({ subscribed: true })
-      .get();
-
+    // 查询所有商家
+    const merchantsRes = await db.collection('merchants').get();
     const sendResults = [];
+    
     for (const merchant of merchantsRes.data) {
       if (!merchant.openid) continue;
       try {
@@ -88,16 +97,7 @@ exports.main = async (event, context) => {
         sendResults.push({ openid: merchant.openid, errCode: 0 });
       } catch (sendErr) {
         console.error('发送失败:', merchant.openid, sendErr);
-        if (sendErr.errCode === 43101) {
-          await db.collection('merchants').doc(merchant._id).update({
-            data: { subscribed: false }
-          });
-        }
-        sendResults.push({
-          openid: merchant.openid,
-          errCode: sendErr.errCode || -1,
-          errMsg: sendErr.errMsg || sendErr.message
-        });
+        sendResults.push({ openid: merchant.openid, errCode: sendErr.errCode || -1, errMsg: sendErr.errMsg });
       }
     }
 

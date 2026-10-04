@@ -97,14 +97,18 @@ closeOrderDetail() {
 
   // 检查当前商家是否已订阅
   checkSubscription() {
+    const merchantId = wx.getStorageSync('merchantId');
+    if (!merchantId) {
+      this.setData({ subscribed: false });
+      return;
+    }
     const db = wx.cloud.database();
-    db.collection('merchants')
-      .where({ openid: app.globalData.openid })  // 需要事先在登录时写入 openid
-      .get()
+    db.collection('merchants').doc(merchantId).get()
       .then(res => {
-        if (res.data.length > 0) {
-          this.setData({ subscribed: res.data[0].subscribed || false });
-        }
+        this.setData({ subscribed: res.data.subscribed || false });
+      })
+      .catch(err => {
+        console.error('查询订阅状态失败', err);
       });
   },
 
@@ -120,25 +124,22 @@ requestSubscribe() {
       if (res[TEMPLATE_ID] === 'accept') {
         // ★ 关键：用户同意后，在云数据库中标记“已订阅”
         const db = wx.cloud.database();
-        db.collection('merchants')
-          .where({
-            // 通过密码定位当前商家，确保更新的是自己的记录
-            openid: app.globalData.openid          })
-          .update({
-            data: { subscribed: true }             })
-          .then(updateRes => {
-            console.log('stats 完整内容：', JSON.stringify(res.stats, null, 2));
-            
+        db.collection('merchants').doc(merchantId).update({
+          data: { subscribed: true }
+        }).then(updateRes => {
+          console.log('stats 完整内容：', updateRes.stats);
+          if (updateRes.stats && updateRes.stats.updated > 0) {
             that.setData({ subscribed: true });
             wx.showToast({ title: '已开启接单提醒', icon: 'success' });
-          })
-          .catch(err => {
-            console.error('更新订阅状态失败', err);
-            wx.showToast({ title: '开启失败，请重试', icon: 'none' });
-          });
+          } else {
+            wx.showToast({ title: '更新失败，请检查数据库权限', icon: 'none' });
+          }
+        }).catch(err => {
+          console.error('更新失败', err);
+          wx.showToast({ title: '更新失败', icon: 'none' });
+        });
       } else {
-        // 用户拒绝了订阅
-        wx.showToast({ title: '你拒绝了通知，将无法收到新订单提醒', icon: 'none' });
+        wx.showToast({ title: '你拒绝了通知', icon: 'none' });
       }
     },
     fail: (err) => {

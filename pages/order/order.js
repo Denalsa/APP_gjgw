@@ -91,10 +91,11 @@ refreshCart() {
 
       // ★ 调用 notifyMerchant
       const orderInfo = {
-        dishes: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
-        total: this.data.total,
-        createTime: Date.now(),
-        note: this.data.note || '',
+        ...res.result.orderInfo,
+      //  dishes: cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
+      //  total: this.data.total,
+      //  createTime: Date.now(),
+      //  note: this.data.note || '',
         userProfile: userProfile   // ← 一并传给通知云函数
       };
       console.log('🔍 准备传给云函数的 merchantOpenid:', JSON.stringify(app.globalData.openid));
