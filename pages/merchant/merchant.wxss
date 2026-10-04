@@ -157,3 +157,186 @@
   font-size: 26px;
   color: #52c41a;
 }
+/* 标签切换 */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 4rpx solid transparent;
+}
+.tab-item.active {
+  color: #ff7d4d;
+  font-weight: bold;
+  border-bottom-color: #ff7d4d;
+}
+
+/* 订单列表 */
+.order-list {
+  padding: 16rpx;
+}
+.order-card {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+.order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+.order-id {
+  font-size: 26rpx;
+  color: #999;
+}
+.order-status {
+  font-size: 24rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+.order-status.ok {
+  background: #f6ffed;
+  color: #389e0d;
+}
+.order-status.warn {
+  background: #fff1f0;
+  color: #cf1322;
+}
+.order-dishes {
+  font-size: 26rpx;
+  color: #333;
+  margin-bottom: 12rpx;
+  line-height: 1.5;
+}
+.order-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #666;
+}
+.order-time {
+  color: #999;
+}
+
+/* 订单详情弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 998;
+}
+.modal-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 640rpx;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  z-index: 999;
+}
+.modal-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 32rpx;
+  color: #333;
+}
+.detail-section {
+  margin-bottom: 28rpx;
+}
+.detail-label {
+  font-size: 26rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 12rpx;
+}
+.detail-dish {
+  display: flex;
+  justify-content: space-between;
+  font-size: 28rpx;
+  color: #333;
+  padding: 8rpx 0;
+}
+.detail-total {
+  font-size: 36rpx;
+  color: #ff7d4d;
+  font-weight: bold;
+}
+
+/* 食材对比 */
+.compare-block {
+  margin-bottom: 20rpx;
+}
+.compare-title {
+  font-size: 26rpx;
+  display: block;
+  margin-bottom: 12rpx;
+}
+.compare-title.urgent {
+  color: #cf1322;
+}
+.compare-title.ok {
+  color: #389e0d;
+}
+.compare-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.compare-tag {
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+}
+.urgent-tag {
+  background: #fff1f0;
+  color: #cf1322;
+  border: 1rpx solid #ffa39e;
+}
+.ok-tag {
+  background: #f6ffed;
+  color: #389e0d;
+  border: 1rpx solid #b7eb8f;
+}
+
+.modal-actions {
+  display: flex;
+  margin-top: 32rpx;
+}
+.modal-btn {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  border: none;
+}
+.cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+}
+
+/* 冰箱按钮 */
+.fridge-btn {
+  background: #1890ff !important;
+  color: #fff !important;
+  font-size: 26rpx !important;
+  border-radius: 8px !important;
+  height: 60rpx !important;
+  line-height: 60rpx !important;
+  padding: 0 24rpx !important;
+  margin-left: 12rpx;
+}

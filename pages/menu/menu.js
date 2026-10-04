@@ -106,8 +106,8 @@ Page({
 
   // 切换分类
   switchCategory(e) {
-    const id = e.currentTarget.dataset.id;
-    this.setData({
+    const id = e.currentTarget.dataset.category;
+    this.setData({ 
       activeCategory: id,
       searchKeyword: ''
     }, () => {

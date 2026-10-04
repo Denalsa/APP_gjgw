@@ -26,11 +26,11 @@
 
         <view class="grid-item" bindtap="showMerchant">
           <text class="grid-icon">🏪</text>
-          <text class="grid-text">管理菜单</text>
+          <text class="grid-text">菜谱</text>
         </view>
         <view class="grid-item" bindtap="checkFridge">
           <text class="grid-icon">🧊</text>
-          <text class="grid-text">冰箱管理</text>
+          <text class="grid-text">冰箱</text>
         </view>
       </view>
     </view>

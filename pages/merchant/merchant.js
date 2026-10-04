@@ -9,7 +9,12 @@ Page({
     dishes: [],
     loading: true,
     refreshing: false,
-    subscribed: false
+    subscribed: false,
+    orders: [],
+    orderLoading: false,
+    activeTab: 'dishes',        // 'dishes' | 'orders'
+    showOrderDetail: false,
+    currentOrder: null
   },
 
   onLoad() {
@@ -49,6 +54,47 @@ Page({
         this.setData({ loading: false, refreshing: false });
       });
   },
+  // 切换到订单标签
+switchTab(e) {
+  const tab = e.currentTarget.dataset.tab;
+  this.setData({ activeTab: tab });
+  if (tab === 'orders') {
+    this.loadOrders();
+  }
+},
+
+// 加载订单列表
+loadOrders() {
+  const db = wx.cloud.database();
+  this.setData({ orderLoading: true });
+  db.collection('orders')
+    .orderBy('createTime', 'desc')
+    .limit(50)
+    .get()
+    .then(res => {
+      this.setData({ orders: res.data, orderLoading: false });
+    })
+    .catch(err => {
+      console.error('加载订单失败', err);
+      wx.showToast({ title: '加载订单失败', icon: 'none' });
+      this.setData({ orderLoading: false });
+    });
+},
+
+// 打开订单详情
+openOrderDetail(e) {
+  const order = e.currentTarget.dataset.order;
+  this.setData({
+    showOrderDetail: true,
+    currentOrder: order
+  });
+},
+
+// 关闭订单详情
+closeOrderDetail() {
+  this.setData({ showOrderDetail: false, currentOrder: null });
+},
+
   // 检查当前商家是否已订阅
   checkSubscription() {
     const db = wx.cloud.database();

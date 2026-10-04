@@ -8,19 +8,16 @@ const TEMPLATE_ID = 'Ui42b4ts_Z8uXJfIc5urZFwCP1SNV3J6KpphONj4kTY';
 exports.main = async (event, context) => {
   console.log('--- notifyMerchant start ---');
   try {
-    const { orderInfo } = event;
+    const { orderInfo, orderId } = event;
     if (!orderInfo || !orderInfo.dishes || !orderInfo.total) {
       return { success: false, message: '订单信息不完整' };
     }
 
-    const merchantOpenid = event.userInfo.openId;
-    const merchantsRes = { data: [{ openid: merchantOpenid }] };
-
-    const { dishes, total, createTime, note, ingredients = [] } = orderInfo; // ★ 解构 ingredients
+    const { dishes, total, createTime, note, ingredients = [] } = orderInfo;
 
     // ★ 对比冰箱库存
-    let needPrepare = [];      // 冰箱没有的
-    let mayNeedPrepare = [];   // 冰箱已有的
+    let needPrepare = [];
+    let mayNeedPrepare = [];
     if (ingredients.length > 0) {
       const fridgeRes = await db.collection('ingredients').get();
       const fridgeNames = fridgeRes.data.map(item => item.name);
@@ -33,16 +30,33 @@ exports.main = async (event, context) => {
       });
     }
 
-    // ★ 构建提示文本
-    let prepTip = '';
+    // ★ 通知里只显示简短提示
+    let shortTip = '';
     if (needPrepare.length > 0) {
-      prepTip += `需采购：${needPrepare.join('、')}；`;
+      shortTip = '缺:' + needPrepare.join('、');
+    } else if (ingredients.length > 0) {
+      shortTip = '冰箱已备齐';
+    } else {
+      shortTip = '无食材信息';
     }
-    if (mayNeedPrepare.length > 0) {
-      prepTip += `冰箱已有：${mayNeedPrepare.join('、')}`;
+    if (shortTip.length > 20) shortTip = shortTip.substring(0, 17) + '...';
+
+    // ★ 完整对比结果写回订单记录
+    if (orderId) {
+      try {
+        await db.collection('orders').doc(orderId).update({
+          data: {
+            ingredientCompare: {
+              needPrepare,
+              mayNeedPrepare,
+              allIngredients: ingredients
+            }
+          }
+        });
+      } catch (e) {
+        console.error('写回订单失败:', e);
+      }
     }
-    if (prepTip === '') prepTip = '无原材料信息';
-    if (prepTip.length > 20) prepTip = prepTip.substring(0, 20) + '...';
 
     const now = new Date(createTime || Date.now());
     const timeStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
@@ -52,8 +66,13 @@ exports.main = async (event, context) => {
       thing2: { value: dishNames.substring(0, 20) },
       amount10: { value: `¥${total}` },
       time4: { value: timeStr },
-      thing9: { value: prepTip }   // ★ 使用 prepTip 而非 note
+      thing9: { value: shortTip }
     };
+
+    // 查询订阅商家并发送
+    const merchantsRes = await db.collection('merchants')
+      .where({ subscribed: true })
+      .get();
 
     const sendResults = [];
     for (const merchant of merchantsRes.data) {
@@ -70,11 +89,18 @@ exports.main = async (event, context) => {
       } catch (sendErr) {
         console.error('发送失败:', merchant.openid, sendErr);
         if (sendErr.errCode === 43101) {
-          await db.collection('merchants').doc(merchant._id).update({ data: { subscribed: false } });
+          await db.collection('merchants').doc(merchant._id).update({
+            data: { subscribed: false }
+          });
         }
-        sendResults.push({ openid: merchant.openid, errCode: sendErr.errCode || -1, errMsg: sendErr.errMsg || sendErr.message });
+        sendResults.push({
+          openid: merchant.openid,
+          errCode: sendErr.errCode || -1,
+          errMsg: sendErr.errMsg || sendErr.message
+        });
       }
     }
+
     console.log('发送结果:', JSON.stringify(sendResults));
     console.log('--- notifyMerchant end ---');
     return { success: true, sendResults, needPrepare, mayNeedPrepare };

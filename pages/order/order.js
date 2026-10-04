@@ -100,7 +100,10 @@ refreshCart() {
       console.log('🔍 准备传给云函数的 merchantOpenid:', JSON.stringify(app.globalData.openid));
       wx.cloud.callFunction({
         name: 'notifymerchant',
-        data: { orderInfo },
+        data: { 
+          orderInfo: orderInfo,
+          orderId: res.result.orderId   // ★ 把订单ID传过去
+        },
         merchantOpenid: app.globalData.openid // ← 加上这一行
       }).then(res => {
         const result = res.result;

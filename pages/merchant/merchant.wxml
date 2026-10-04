@@ -1,10 +1,11 @@
-<!-- pages/merchant/merchant.wxml -->
 <view class="merchant-container">
+  <!-- 顶部标题栏 -->
   <view class="header">
     <text class="header-title">👨‍🍳 商家管理后台</text>
     <text class="logout-btn" bindtap="logout">退出</text>
   </view>
 
+  <!-- 订阅提醒 -->
   <view class="subscribe-bar">
     <button wx:if="{{!subscribed}}" class="subscribe-btn" bindtap="requestSubscribe">
       🔔 开启接单提醒
@@ -12,31 +13,123 @@
     <text wx:else class="subscribed-text">✅ 接单提醒已开启</text>
   </view>
 
-  <view class="stats-bar">
-  <text class="stats-text">共 {{dishes.length}} 道菜品</text>
-  <view class="header-actions">
-    <button class="add-btn" bindtap="goAddDish" size="mini" type="primary">+ 新增菜品</button>
-    <button class="add-btn" bindtap="goFridge" size="mini" type="default" style="margin-left: 12rpx;">🧊 冰箱管理</button>
-  </view>
-</view>
-
-  <view class="dish-list" wx:if="{{!loading && dishes.length > 0}}">
-    <view class="dish-item" wx:for="{{dishes}}" wx:key="_id">
-      <image class="dish-img" src="{{item.image}}" mode="aspectFill" />
-      <view class="dish-info">
-        <text class="dish-name">{{item.name}}</text>
-        <text class="dish-category">{{item.category}} · ¥{{item.price}}</text>
-        <text class="dish-stock">库存：{{item.stock || 0}}</text>
-      </view>
-      <view class="dish-actions">
-        <button class="del-btn" size="mini" data-id="{{item._id}}" bindtap="deleteDish">删除</button>
-      </view>
+  <!-- 标签切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'dishes' ? 'active' : ''}}" data-tab="dishes" bindtap="switchTab">
+      菜品管理
+    </view>
+    <view class="tab-item {{activeTab === 'orders' ? 'active' : ''}}" data-tab="orders" bindtap="switchTab">
+      订单记录
     </view>
   </view>
 
-  <view class="loading-box" wx:if="{{loading}}"><text>加载中...</text></view>
-  <view class="empty-box" wx:if="{{!loading && dishes.length === 0}}">
-    <text class="empty-text">暂未添加菜品</text>
-    <button class="empty-btn" bindtap="goAddDish">立即添加第一道菜</button>
+  <!-- 菜品管理 -->
+  <block wx:if="{{activeTab === 'dishes'}}">
+    <view class="stats-bar">
+      <text class="stats-text">共 {{dishes.length}} 道菜品</text>
+      <view class="header-actions">
+        <button class="add-btn" bindtap="goAddDish" size="mini">+ 新增菜品</button>
+        <button class="add-btn fridge-btn" bindtap="goFridge" size="mini">🧊 冰箱</button>
+      </view>
+    </view>
+
+    <view class="dish-list" wx:if="{{!loading && dishes.length > 0}}">
+      <view class="dish-item" wx:for="{{dishes}}" wx:key="_id">
+        <image class="dish-img" src="{{item.image}}" mode="aspectFill" />
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-category">{{item.category}} · ¥{{item.price}}</text>
+          <text class="dish-stock">库存：{{item.stock || 0}}</text>
+        </view>
+        <view class="dish-actions">
+          <button class="del-btn" size="mini" data-id="{{item._id}}" bindtap="deleteDish">删除</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="loading-box" wx:if="{{loading}}"><text>加载中...</text></view>
+    <view class="empty-box" wx:if="{{!loading && dishes.length === 0}}">
+      <text class="empty-text">暂未添加菜品</text>
+      <button class="empty-btn" bindtap="goAddDish">立即添加第一道菜</button>
+    </view>
+  </block>
+
+  <!-- 订单记录 -->
+  <block wx:if="{{activeTab === 'orders'}}">
+    <view class="order-list" wx:if="{{!orderLoading && orders.length > 0}}">
+      <view class="order-card" wx:for="{{orders}}" wx:key="_id" data-order="{{item}}" bindtap="openOrderDetail">
+        <view class="order-head">
+          <text class="order-id">订单 {{item._id.substring(0, 8)}}...</text>
+          <text class="order-status {{item.ingredientCompare.needPrepare.length > 0 ? 'warn' : 'ok'}}">
+            {{item.ingredientCompare.needPrepare.length > 0 ? '需采购' : '食材齐'}}
+          </text>
+        </view>
+        <view class="order-dishes">
+          <text wx:for="{{item.cart}}" wx:for-item="d" wx:key="index">
+            {{d.name}}×{{d.quantity}}{{index < item.cart.length - 1 ? '、' : ''}}
+          </text>
+        </view>
+        <view class="order-foot">
+          <text>¥{{item.total}}</text>
+          <text class="order-time">{{item.createTime}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="loading-box" wx:if="{{orderLoading}}"><text>加载中...</text></view>
+    <view class="empty-box" wx:if="{{!orderLoading && orders.length === 0}}">
+      <text class="empty-text">暂无订单</text>
+    </view>
+  </block>
+
+  <!-- 订单详情弹窗 -->
+  <view class="modal-mask" wx:if="{{showOrderDetail}}" bindtap="closeOrderDetail"></view>
+  <view class="modal-box" wx:if="{{showOrderDetail}}">
+    <view class="modal-title">订单详情</view>
+    
+    <view class="detail-section">
+      <text class="detail-label">菜品清单</text>
+      <view class="detail-dish" wx:for="{{currentOrder.cart}}" wx:key="index">
+        <text>{{item.name}} × {{item.quantity}}</text>
+        <text>¥{{item.price * item.quantity}}</text>
+      </view>
+    </view>
+
+    <!-- ★ 食材对比 -->
+    <view class="detail-section" wx:if="{{currentOrder.ingredientCompare}}">
+      <text class="detail-label">食材准备对比</text>
+      
+      <view class="compare-block" wx:if="{{currentOrder.ingredientCompare.needPrepare.length > 0}}">
+        <text class="compare-title urgent">❌ 需采购（{{currentOrder.ingredientCompare.needPrepare.length}}）</text>
+        <view class="compare-items">
+          <text class="compare-tag urgent-tag" wx:for="{{currentOrder.ingredientCompare.needPrepare}}" wx:key="*this">
+            {{item}}
+          </text>
+        </view>
+      </view>
+      
+      <view class="compare-block" wx:if="{{currentOrder.ingredientCompare.mayNeedPrepare.length > 0}}">
+        <text class="compare-title ok">✅ 冰箱已有（{{currentOrder.ingredientCompare.mayNeedPrepare.length}}）</text>
+        <view class="compare-items">
+          <text class="compare-tag ok-tag" wx:for="{{currentOrder.ingredientCompare.mayNeedPrepare}}" wx:key="*this">
+            {{item}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <text class="detail-label">备注</text>
+      <text>{{currentOrder.note || '无'}}</text>
+    </view>
+
+    <view class="detail-section">
+      <text class="detail-label">合计</text>
+      <text class="detail-total">¥{{currentOrder.total}}</text>
+    </view>
+
+    <view class="modal-actions">
+      <button class="modal-btn cancel-btn" bindtap="closeOrderDetail">关闭</button>
+    </view>
   </view>
 </view>

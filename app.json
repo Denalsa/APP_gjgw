@@ -11,7 +11,7 @@
     "pages/fridge/fridge"
   ],
   "window": {
-    "navigationBarTitleText": "今日点菜",
+    "navigationBarTitleText": "小郑大厨",
     "navigationBarBackgroundColor": "#fff8f0",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f7f7f7"
