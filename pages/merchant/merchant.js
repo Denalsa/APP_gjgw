@@ -7,6 +7,10 @@ Page({
   data: {
     merchantInfo: null,
     dishes: [],
+    currentDishes: [],              // ← 必须有
+    categories: ['炒菜', '炖菜', '凉菜', '烧菜', '一人食', '融合菜'],   // ← 必须有
+    activeCategory: '炒菜',         // ← 必须有
+    searchKeyword: '',
     loading: true,
     refreshing: false,
     subscribed: false,
