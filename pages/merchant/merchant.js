@@ -41,7 +41,7 @@ Page({
   loadDishes() {
     const db = wx.cloud.database();
     this.setData({ loading: true });
-
+  
     db.collection('dishes')
       .orderBy('createTime', 'desc')
       .get()
@@ -50,6 +50,8 @@ Page({
           dishes: res.data,
           loading: false,
           refreshing: false
+        }, () => {
+          this.filterDishes();   // ★ 加载完成后按当前分类过滤
         });
       })
       .catch(err => {
@@ -66,7 +68,55 @@ switchTab(e) {
     this.loadOrders();
   }
 },
+// 切换分类
+switchCategory(e) {
+  const category = e.currentTarget.dataset.category;
+  this.setData({ activeCategory: category, searchKeyword: '' }, () => {
+    this.filterDishes();
+  });
+},
 
+// 搜索输入
+onSearchInput(e) {
+  this.setData({ searchKeyword: e.detail.value.trim() }, () => {
+    this.filterDishes();
+  });
+},
+
+// 清空搜索
+clearSearch() {
+  this.setData({ searchKeyword: '' }, () => {
+    this.filterDishes();
+  });
+},
+
+// ★ 核心：按分类或搜索关键字筛选菜品
+filterDishes() {
+  const { dishes, activeCategory, searchKeyword } = this.data;
+  let result = dishes;
+
+  if (searchKeyword) {
+    // 有搜索词：按菜名 + 食材搜索
+    const kw = searchKeyword.toLowerCase();
+    result = result.filter(d => {
+      const matchName = d.name && d.name.toLowerCase().includes(kw);
+      let matchIngredients = false;
+      if (d.ingredients) {
+        if (Array.isArray(d.ingredients)) {
+          matchIngredients = d.ingredients.some(i => i.toLowerCase().includes(kw));
+        } else if (typeof d.ingredients === 'string') {
+          matchIngredients = d.ingredients.toLowerCase().includes(kw);
+        }
+      }
+      return matchName || matchIngredients;
+    });
+  } else {
+    // 无搜索词：按分类筛选
+    result = result.filter(d => d.category === activeCategory);
+  }
+
+  this.setData({ currentDishes: result });
+},
 // 加载订单列表
 loadOrders() {
   const db = wx.cloud.database();
